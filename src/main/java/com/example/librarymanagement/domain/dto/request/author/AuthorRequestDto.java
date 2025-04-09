@@ -1,4 +1,4 @@
-package com.example.librarymanagement.domain.dto.request;
+package com.example.librarymanagement.domain.dto.request.author;
 
 import com.example.librarymanagement.constant.CommonConstant;
 import com.example.librarymanagement.constant.ErrorMessage;
