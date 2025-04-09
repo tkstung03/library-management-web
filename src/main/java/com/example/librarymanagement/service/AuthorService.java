@@ -1,7 +1,10 @@
 package com.example.librarymanagement.service;
 
 import com.example.librarymanagement.domain.dto.common.CommonResponseDto;
+import com.example.librarymanagement.domain.dto.pagination.PaginationFullRequestDto;
+import com.example.librarymanagement.domain.dto.pagination.PaginationResponseDto;
 import com.example.librarymanagement.domain.dto.request.author.AuthorRequestDto;
+import com.example.librarymanagement.domain.entity.Author;
 
 public interface AuthorService {
     void init(String authorsCsvPath);
@@ -12,6 +15,10 @@ public interface AuthorService {
 
     CommonResponseDto delete(Long id,String userId);
 
-    Paginat
+    PaginationResponseDto<Author> findAll(PaginationFullRequestDto requestDto);
+
+    Author findById(Long id);
+
+    CommonResponseDto toggleActivityStatus(Long id, String userId);
 
 }
