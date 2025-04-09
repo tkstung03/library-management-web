@@ -11,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommonResponseDto {
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean status;
 
