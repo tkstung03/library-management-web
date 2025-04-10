@@ -27,7 +27,7 @@ public class BookBorrow { //chi tiết sách mượn
     private LocalDate returnDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     private BookBorrowStatus bookBorrowStatus = BookBorrowStatus.NOT_RETURNED;
 
     @ManyToOne(fetch = FetchType.LAZY)
