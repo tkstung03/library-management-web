@@ -1,11 +1,10 @@
-package com.example.librarymanagement.domain.dto.response;
+package com.example.librarymanagement.domain.dto.response.other;
 
 import com.example.librarymanagement.constant.CommonConstant;
 import com.example.librarymanagement.domain.entity.Log;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 

@@ -12,9 +12,9 @@ import java.time.LocalDate;
 public abstract class DateAuditingDto {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonConstant.PATTERN_DATE_TIME)
-    private LocalDate createdDate;
+    protected LocalDate createdDate;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonConstant.PATTERN_DATE_TIME)
-    private LocalDate lastModifiedDate;
+    protected LocalDate lastModifiedDate;
 
 }

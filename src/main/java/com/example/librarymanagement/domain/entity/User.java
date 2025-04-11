@@ -64,6 +64,10 @@ public class User {
     @JsonIgnore
     private List<Log> logs = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Log> newsArticles = new ArrayList<>();
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Notification> notifications = new ArrayList<>();

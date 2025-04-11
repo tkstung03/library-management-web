@@ -1,5 +1,6 @@
 package com.example.librarymanagement.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -44,4 +45,9 @@ public class NewsArticle {
 
     @Column(name = "view_count", nullable = false)
     private Long viewCount = 0L;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_NEWS_ARTICLES_USER_ID"), referencedColumnName = "user_group_id", nullable = false)
+    @JsonIgnore
+    private User user;
 }
