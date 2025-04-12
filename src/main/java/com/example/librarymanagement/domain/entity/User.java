@@ -64,13 +64,13 @@ public class User {
     @JsonIgnore
     private List<Log> logs = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<Log> newsArticles = new ArrayList<>();
+    private List<NewsArticle> newsArticles = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<Notification> notifications = new ArrayList<>();
+    private List<Notifications> notifications = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_group_id", foreignKey = @ForeignKey(name = "FK_USER_USER_GROUP_ID"), referencedColumnName = "user_group_id", nullable = false)

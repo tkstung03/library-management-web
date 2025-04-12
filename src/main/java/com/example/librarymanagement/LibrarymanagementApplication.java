@@ -2,17 +2,14 @@ package com.example.librarymanagement;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 
-//@Log4j2 thay bang
-@Slf4j
+@Log4j2
 @RequiredArgsConstructor
 @SpringBootApplication
 @EnableScheduling

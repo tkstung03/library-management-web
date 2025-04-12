@@ -9,6 +9,7 @@ import com.example.librarymanagement.domain.entity.Author;
 import com.example.librarymanagement.domain.mapper.AuthorMapper;
 import com.example.librarymanagement.repository.AuthorRepository;
 import com.example.librarymanagement.service.AuthorService;
+import com.example.librarymanagement.service.LogService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.MessageSource;
