@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaginationFullRequestDto {
+public class PaginationFullRequestDto extends PaginationSortRequestDto {
 
     @Parameter(description = "Keyword to search")
     private String keyword = CommonConstant.EMPTY_STRING;
