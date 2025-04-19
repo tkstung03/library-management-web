@@ -40,6 +40,8 @@ public class ReaderViolationSpecification {
                     }
                 }
             }
+
+            return predicate;
         };
     }
 }
