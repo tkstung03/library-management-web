@@ -18,7 +18,7 @@ import java.util.List;
 @Table(name = "authors",
         uniqueConstraints = @UniqueConstraint(name = "UN_AUTHOR_CODE", columnNames = "code"))
 
-public class Author {
+public class  Author {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
