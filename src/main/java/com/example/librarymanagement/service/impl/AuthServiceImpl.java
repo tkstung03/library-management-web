@@ -6,13 +6,16 @@ import com.example.librarymanagement.domain.dto.response.auth.CurrentUserLoginRe
 import com.example.librarymanagement.domain.dto.response.auth.LoginResponseDto;
 import com.example.librarymanagement.domain.dto.response.auth.TokenRefreshResponseDto;
 import com.example.librarymanagement.security.CustomUserDetails;
+import com.example.librarymanagement.security.jwt.JwtTokenProvider;
 import com.example.librarymanagement.service.AuthService;
+import com.example.librarymanagement.service.JwtBlacklistService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +24,16 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthServiceImpl implements AuthService {
+
+    private static final String TAG = "Xác thực";
+
+    AuthenticationManager authenticationManager;
+
+    JwtTokenProvider jwtTokenProvider;
+
+    JwtBlacklistService jwtBlacklistService;
+
+
     @Override
     public LoginResponseDto readerLogin(ReaderLoginRequestDto request) {
         return null;
