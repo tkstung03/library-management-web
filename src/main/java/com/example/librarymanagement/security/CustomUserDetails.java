@@ -19,7 +19,7 @@ import java.util.List;
 public class CustomUserDetails implements UserDetails {
 
     @Getter
-    private final String UserId;
+    private final String userId;
 
     @Getter
     private final String cardNumber;

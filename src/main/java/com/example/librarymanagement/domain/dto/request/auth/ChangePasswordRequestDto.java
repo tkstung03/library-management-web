@@ -22,7 +22,7 @@ public class ChangePasswordRequestDto {
     @NotBlank(message = ErrorMessage.INVALID_NOT_BLANK_FIELD)
     @Pattern(regexp = CommonConstant.REGEXP_PASSWORD, message = ErrorMessage.INVALID_FORMAT_PASSWORD)
     @Size(max = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
-    private String newPassword;
+    private String password;
 
     @NotBlank(message = ErrorMessage.INVALID_NOT_BLANK_FIELD)
     @Size(max = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)

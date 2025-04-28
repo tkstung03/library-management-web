@@ -15,6 +15,7 @@ import java.util.Map;
 @Log4j2
 @Component
 public class JwtTokenProvider {
+
     private static final String CLAIM_TYPE = "type";
     private static final String TYPE_ACCESS = "access";
     private static final String TYPE_REFRESH = "refresh";
@@ -43,6 +44,7 @@ public class JwtTokenProvider {
                     .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                     .compact();
         }
+
         return Jwts.builder()
                 .setClaims(claim)
                 .setSubject(userDetails.getUserId())
