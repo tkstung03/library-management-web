@@ -502,19 +502,19 @@ public class BookDefinitionServiceImpl implements BookDefinitionService {
 
     @Override
     public byte[] getBooksPdfContent(Set<Long> ids) {
-        List<Book> books = bookRepository.findAllByBookDefnitionIdIn(ids);
+        List<Book> books = bookRepository.findAllByBookDefinitionIdIn(ids);
         return pdfService.createPdfFromBooks(books);
     }
 
     @Override
     public byte[] getBooksLabelType1PdfContent(Set<Long> ids) {
-        List<Book> books = bookRepository.findAllByBookDefnitionIdIn(ids);
+        List<Book> books = bookRepository.findAllByBookDefinitionIdIn(ids);
         return pdfService.createLabelType1Pdf(systemSettingService.getLibraryInfo().getLibrarySymbol(), books);
     }
 
     @Override
     public byte[] getBooksLabelType2PdfContent(Set<Long> ids) {
-        List<Book> books = bookRepository.findAllByBookDefnitionIdIn(ids);
+        List<Book> books = bookRepository.findAllByBookDefinitionIdIn(ids);
         return pdfService.createLabelType2Pdf(books);
     }
 

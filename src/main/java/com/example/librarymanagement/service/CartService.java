@@ -10,7 +10,7 @@ public interface CartService {
 
     List<CartDetailResponseDto> getCartDetails(String cardNumber);
 
-    CommonResponseDto addToCart(String cardNumber, Set<Long> bookCode);
+    CommonResponseDto addToCart(String cardNumber, String bookCode);
 
     CommonResponseDto removeFromCart(String cardNumber, Set<Long> cartDetailIds);
 

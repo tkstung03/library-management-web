@@ -20,7 +20,7 @@ public class BookResponseDto {
 
     private final BookDefinitionResponseDto bookDefinition;
 
-    private BookResponseDto(Book book){
+    public BookResponseDto(Book book){
 
         this.id = book.getId();
         this.bookCode = book.getBookCode();
