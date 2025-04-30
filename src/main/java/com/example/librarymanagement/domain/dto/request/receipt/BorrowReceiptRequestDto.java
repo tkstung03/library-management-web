@@ -26,6 +26,9 @@ public class BorrowReceiptRequestDto {
     @NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED)
     private LocalDate borrowDate;
 
+    @NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED)
+    private LocalDate dueDate;
+
     @Size(max = 255, message = ErrorMessage.INVALID_TEXT_LENGTH)
     private String note;
 
