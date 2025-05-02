@@ -11,5 +11,5 @@ import java.util.Optional;
 @Repository
 public interface NewsArticleRepository extends JpaRepository<NewsArticle, Long>, JpaSpecificationExecutor<NewsArticle> {
 
-    Optional<NewsArticle> findBYTitleSlug(String titleSlug);
+    Optional<NewsArticle> findByTitleSlug(String titleSlug);
 }

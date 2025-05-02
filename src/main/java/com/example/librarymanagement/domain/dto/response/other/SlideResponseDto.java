@@ -1,5 +1,6 @@
 package com.example.librarymanagement.domain.dto.response.other;
 
+import com.example.librarymanagement.domain.entity.Book;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,5 +15,5 @@ public class SlideResponseDto {
     private String title;
     private String description;
     private String imageUrl;
-    private String activeFlag;
+    private Boolean activeFlag;
 }
