@@ -33,7 +33,7 @@ public class LibraryInfoRequestDto {
     private String school;
 
     @NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED)
-    private String principleName;
+    private String principalName;
 
     @NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED)
     private String phoneNumber;
