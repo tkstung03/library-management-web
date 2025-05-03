@@ -167,7 +167,7 @@ public class UserServiceImpl implements UserService {
         // Lưu thay đổi
         userRepository.save(user);
 
-        logService.createLog(TAG, EventConstants.EDIT, "Cập nhật người dùng id: " + user.getId() + ", tên mới: " + user.getUsername(), userId);
+        logService.createLog(TAG, EventConstants.EDIT, "Cập nhật người dùng ID: " + user.getId() + ", tên mới: " + user.getUsername(), userId);
 
         String message = messageSource.getMessage(SuccessMessage.UPDATE, null, LocaleContextHolder.getLocale());
         return new CommonResponseDto(message, new UserResponseDto(user));
