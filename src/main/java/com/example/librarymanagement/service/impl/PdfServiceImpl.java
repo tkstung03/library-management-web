@@ -1,0 +1,378 @@
+package com.example.librarymanagement.service.impl;
+
+import com.example.librarymanagement.domain.entity.*;
+import com.example.librarymanagement.service.PdfService;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.*;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Service;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+@Log4j2
+@Service
+@RequiredArgsConstructor
+public class PdfServiceImpl implements PdfService {
+
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    private static Font normalFontSmall;
+    private static Font normalFontMedium;
+    private static Font normalFontLarge;
+    private static Font boldFontSmall;
+    private static Font boldFontMedium;
+    private static Font boldFontLarge;
+    private static Font italicFontSmall;
+    private static Font italicFontMedium;
+    private static Font italicFontLarge;
+    private static Font boldItalicFontSmall;
+    private static Font boldItalicFontMedium;
+    private static Font boldItalicFontLarge;
+    private static Font headerFont;
+    private static Font subHeaderFont;
+
+    static {
+        String FONT_PATH = "src/main/resources/fonts/NotoSans-Regular.ttf";
+
+        try {
+            BaseFont baseFont =BaseFont.createFont(FONT_PATH, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+
+            // Font thông thường
+            normalFontSmall = new Font(baseFont, 10, Font.NORMAL);
+            normalFontMedium = new Font(baseFont, 12, Font.NORMAL);
+            normalFontLarge = new Font(baseFont, 14, Font.NORMAL);
+
+            // Font đậm
+            boldFontSmall = new Font(baseFont, 10, Font.BOLD);
+            boldFontMedium = new Font(baseFont, 12, Font.BOLD);
+            boldFontLarge = new Font(baseFont, 14, Font.BOLD);
+
+            // Font nghiêng
+            italicFontSmall = new Font(baseFont, 10, Font.ITALIC);
+            italicFontMedium = new Font(baseFont, 12, Font.ITALIC);
+            italicFontLarge = new Font(baseFont, 14, Font.ITALIC);
+
+            // Font vừa đậm vừa nghiêng
+            boldItalicFontSmall = new Font(baseFont, 10, Font.BOLDITALIC);
+            boldItalicFontMedium = new Font(baseFont, 12, Font.BOLDITALIC);
+            boldItalicFontLarge = new Font(baseFont, 14, Font.BOLDITALIC);
+
+            // Font tiêu đề
+            headerFont = new Font(baseFont, 16, Font.BOLD);
+            subHeaderFont = new Font(baseFont, 14, Font.BOLD);
+        } catch (DocumentException | IOException e) {
+            log.error("Failed to create font: {}", FONT_PATH);
+        }
+    }
+
+    @Override
+    public byte[] createReaderCard(String managementUnit, String schoolName, String principalName, List<Reader> readers) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Document document = new Document(PageSize.A4, 10, 10, 10, 10);
+
+        try {
+            PdfWriter pdfWriter = PdfWriter.getInstance(document, outputStream);
+            document.open();
+
+            int cardsPerPage = 8;
+            int totalReaders = readers.size();
+            int totalPages = (int) Math.ceil((double)  totalReaders / cardsPerPage);
+
+            for (int pageIndex = 0; pageIndex < totalPages; pageIndex++) {
+                PdfPTable mainTable = new PdfPTable(2);
+                mainTable.setWidthPercentage(100);
+                mainTable.setSpacingBefore(10f);
+                mainTable.setSpacingAfter(10f);
+
+                int lop = Math.min((pageIndex + 1) * cardsPerPage, totalPages );
+                for (int i = pageIndex * cardsPerPage; i < lop; i++) {
+                    Reader reader =readers.get(i);
+                    PdfPTable cardContainer = new PdfPTable(1);
+                    cardContainer.setWidthPercentage(100);
+
+                    PdfPCell headerCell = new PdfPCell();
+                    headerCell.addElement(createParagraph(managementUnit, headerFont, Element.ALIGN_CENTER));
+                    headerCell.addElement(createParagraph(schoolName, headerFont, Element.ALIGN_CENTER));
+                    headerCell.setBorder(Rectangle.NO_BORDER);
+                    cardContainer.addCell(headerCell);
+
+                    PdfPTable cardContentTable = new PdfPTable(2);
+                    cardContentTable.setWidthPercentage(100);
+                    cardContentTable.setWidths(new int[]{1, 2});
+
+                    PdfPTable avatarTable = createAvatarTable(pdfWriter, reader);
+                    PdfPCell avatarCell = new PdfPCell(avatarTable);
+                    avatarCell.setPadding(5);
+                    avatarCell.setBorder(Rectangle.NO_BORDER);
+                    cardContentTable.addCell(avatarCell);
+
+                    PdfPCell infoCell = createInfoCell(principalName, reader);
+                    cardContentTable.addCell(infoCell);
+
+                    PdfPCell cardCell = new PdfPCell(cardContentTable);
+                    cardCell.setPadding(5);
+                    cardCell.setBorder(Rectangle.NO_BORDER);
+                    cardContainer.addCell(cardCell);
+
+                    mainTable.addCell(cardContainer);
+                }
+
+                if (lop % 2 == 1) {
+                    mainTable.completeRow();
+                }
+
+                document.add(mainTable);
+
+                // Add new page except for the last page
+                if (pageIndex < totalPages - 1) {
+                    document.newPage();
+                }
+            }
+
+            document.close();
+        } catch (DocumentException | IOException e) {
+            log.error("Error creating PDF: {}", e.getMessage(), e);
+        }
+        return outputStream.toByteArray();
+    }
+
+    private Paragraph createParagraph(String text, Font font, int alignment) {
+        Paragraph paragraph = new Paragraph(text, font);
+        paragraph.setAlignment(alignment);
+        return paragraph;
+    }
+
+    private PdfPTable createAvatarTable(PdfWriter writer, Reader reader) throws IOException, DocumentException {
+        PdfPTable avatarTable = new PdfPTable(1);
+        avatarTable.setWidthPercentage(100);
+
+        PdfPCell avatarImageCell = new PdfPCell();
+        avatarImageCell.setFixedHeight(90);
+        String avatarUrl = reader.getAvatar();
+        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+            Image avatarImage = Image.getInstance(avatarUrl);
+            avatarImage.scaleToFit(75, 75);
+            avatarImage.setAlignment(Element.ALIGN_CENTER);
+            avatarImageCell.addElement(avatarImage);
+            avatarImageCell.setBorder(Rectangle.NO_BORDER);
+        } else {
+            avatarImageCell.setBorder(Rectangle.BOX);
+        }
+        avatarTable.addCell(avatarImageCell);
+
+        PdfPCell barcodeCell = new PdfPCell();
+        barcodeCell.setPaddingTop(10);
+        barcodeCell.setBorder(Rectangle.NO_BORDER);
+
+        Barcode128 barcode = new Barcode128();
+        barcode.setCode(reader.getCardNumber());
+
+        Image barcodeImage = barcode.createImageWithBarcode(writer.getDirectContent(), null, null);
+        barcodeImage.setAlignment(Element.ALIGN_CENTER);
+        barcodeImage.scalePercent(80);
+        barcodeCell.addElement(barcodeImage);
+
+        avatarTable.addCell(barcodeCell);
+
+        return avatarTable;
+    }
+
+    private PdfPCell createInfoCell(String principalName, Reader reader) {
+        PdfPCell infoCell = new PdfPCell();
+        infoCell.setBorder(Rectangle.NO_BORDER);
+
+        infoCell.addElement(createParagraph("THẺ THƯ VIỆN", boldFontMedium, Element.ALIGN_CENTER));
+        infoCell.addElement(new Paragraph(String.format("Họ và tên: %s", reader.getFullName()), normalFontMedium));
+        infoCell.addElement(new Paragraph(String.format("Loại thẻ: %s", reader.getCardType().getDisplayName()), normalFontMedium));
+        infoCell.addElement(new Paragraph(String.format("Ngày sinh: %s", reader.getDateOfBirth() != null ? reader.getDateOfBirth().format(formatter) : "Không có"), normalFontMedium));
+        infoCell.addElement(new Paragraph(String.format("Ngày hết hạn: %s", reader.getExpiryDate() != null ? reader.getExpiryDate().format(formatter) : "Không có"), normalFontMedium));
+        infoCell.addElement(createParagraph("Ban giám hiệu", normalFontMedium, Element.ALIGN_CENTER));
+        infoCell.addElement(createParagraph(principalName.toUpperCase(), italicFontMedium, Element.ALIGN_CENTER));
+
+        return infoCell;
+    }
+
+    @Override
+    public byte[] createReceipt(User user, String schoolName, List<BorrowReceipt> borrowReceipts) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Document document = new Document(PageSize.A4, 10, 10, 10, 10);
+
+        try {
+            PdfWriter.getInstance(document, outputStream);
+            document.open();
+
+            int receiptsPerPage = 2;
+            int totalBorrowReceipts = borrowReceipts.size();
+            int totalPages = (int) Math.ceil((double) totalBorrowReceipts / receiptsPerPage);
+
+            for (int pageIndex = 0; pageIndex < totalPages; pageIndex++) {
+                PdfPTable mainTable = new PdfPTable(2);
+                mainTable.setWidthPercentage(100);
+                mainTable.setSpacingBefore(10f);
+                mainTable.setSpacingAfter(10f);
+
+                int lop = Math.min((pageIndex + 1) * receiptsPerPage, totalBorrowReceipts);
+                for (int i = pageIndex * receiptsPerPage; i < lop; i++) {
+                    BorrowReceipt borrowReceipt = borrowReceipts.get(i);
+                    PdfPCell receiptContainer = new PdfPCell();
+                    receiptContainer.setPadding(10);
+                    receiptContainer.setBorder(Rectangle.BOX);
+                    receiptContainer.setBorderColor(BaseColor.GRAY);
+
+                    //Tiêu đề
+                    Paragraph title = new Paragraph(schoolName, boldFontLarge);
+                    title.setAlignment(Element.ALIGN_CENTER);
+                    receiptContainer.addElement(title);
+
+                    Paragraph receiptInfo = new Paragraph("PHIẾU MƯỢN TÀI LIỆU", normalFontLarge);
+                    receiptInfo.setAlignment(Element.ALIGN_CENTER);
+                    receiptContainer.addElement(receiptInfo);
+
+                    receiptContainer.addElement(new Paragraph("\n"));
+
+                    Paragraph receiptNumber = new Paragraph(String.format("Số phiếu: %s", borrowReceipt.getReceiptNumber()), normalFontMedium);
+                    receiptNumber.setAlignment(Element.ALIGN_RIGHT);
+                    receiptContainer.addElement(receiptNumber);
+
+                    // Thông tin người mượn
+                    Paragraph readerName = new Paragraph(String.format("Họ và tên: %s", borrowReceipt.getReader().getFullName()), normalFontMedium);
+                    readerName.setAlignment(Element.ALIGN_LEFT);
+                    receiptContainer.addElement(readerName);
+
+                    Paragraph readerCard = new Paragraph(String.format("Mã số thẻ: %s", borrowReceipt.getReader().getCardNumber()), normalFontMedium);
+                    readerCard.setAlignment(Element.ALIGN_LEFT);
+                    receiptContainer.addElement(readerCard);
+
+                    Paragraph borrowDate = new Paragraph(String.format("Ngày mượn: %s", borrowReceipt.getBorrowDate().format(formatter)), normalFontMedium);
+                    borrowDate.setAlignment(Element.ALIGN_LEFT);
+                    receiptContainer.addElement(borrowDate);
+
+                    Paragraph dueDate = new Paragraph(String.format("Ngày hẹn trả: %s", borrowReceipt.getDueDate().format(formatter)), normalFontMedium);
+                    dueDate.setAlignment(Element.ALIGN_LEFT);
+                    receiptContainer.addElement(dueDate);
+
+                    receiptContainer.addElement(new Paragraph("\n"));
+
+                    Paragraph documentListLabel = new Paragraph("Danh sách tài liệu:", normalFontMedium);
+                    documentListLabel.setAlignment(Element.ALIGN_LEFT);
+                    receiptContainer.addElement(documentListLabel);
+
+                    // Danh sách sách mượn
+                    PdfPTable bookTable = new PdfPTable(3);
+                    bookTable.setWidthPercentage(100);
+                    bookTable.setSpacingBefore(10f);
+                    bookTable.setWidths(new float[]{1, 6, 3});
+
+                    // Header bảng
+                    PdfPCell headerSTT = new PdfPCell(new Phrase("STT", boldFontSmall));
+                    headerSTT.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    headerSTT.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                    bookTable.addCell(headerSTT);
+
+                    PdfPCell headerTitle = new PdfPCell(new Phrase("Tên sách", boldFontSmall));
+                    headerTitle.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    headerTitle.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                    bookTable.addCell(headerTitle);
+
+                    PdfPCell headerCode = new PdfPCell(new Phrase("Mã sách", boldFontSmall));
+                    headerCode.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    headerCode.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                    bookTable.addCell(headerCode);
+
+                    // Dữ liệu sách mượn
+                    List<BookBorrow> bookBorrows = borrowReceipt.getBookBorrows();
+                    for (int k = 0; k < bookBorrows.size(); k++) {
+                        BookBorrow bookBorrow = bookBorrows.get(k);
+                        Book book = bookBorrow.getBook();
+
+                        PdfPCell sttCell = new PdfPCell(new Phrase(String.valueOf(k + 1), boldFontMedium));
+                        sttCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        bookTable.addCell(sttCell);
+
+                        bookTable.addCell(new PdfPCell(new Phrase(book.getBookDefinition().getTitle(), normalFontMedium)));
+                        bookTable.addCell(new PdfPCell(new Phrase(book.getBookCode(), normalFontMedium)));
+                    }
+                    receiptContainer.addElement(bookTable);
+
+                    // Chữ ký
+                    PdfPTable signatureTable = new PdfPTable(2);
+                    signatureTable.setWidthPercentage(100);
+
+                    PdfPCell borrowerLabelCell = new PdfPCell(new Phrase("Người mượn", normalFontMedium));
+                    borrowerLabelCell.setBorder(Rectangle.NO_BORDER);
+                    borrowerLabelCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    signatureTable.addCell(borrowerLabelCell);
+
+                    PdfPCell issuerLabelCell = new PdfPCell(new Phrase("Người lập phiếu", normalFontMedium));
+                    issuerLabelCell.setBorder(Rectangle.NO_BORDER);
+                    issuerLabelCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    signatureTable.addCell(issuerLabelCell);
+
+                    PdfPCell borrowerSignatureCell = new PdfPCell(new Phrase("", normalFontMedium));
+                    borrowerSignatureCell.setBorder(Rectangle.NO_BORDER);
+                    borrowerSignatureCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    signatureTable.addCell(borrowerSignatureCell);
+
+                    PdfPCell issuerSignatureCell = new PdfPCell(new Phrase(user.getFullName(), normalFontMedium));
+                    issuerSignatureCell.setBorder(Rectangle.NO_BORDER);
+                    issuerSignatureCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    signatureTable.addCell(issuerSignatureCell);
+
+                    receiptContainer.addElement(signatureTable);
+
+                    mainTable.addCell(receiptContainer);
+                }
+
+                if (lop % 2 == 1) {
+                    mainTable.completeRow();
+                }
+
+                document.add(mainTable);
+
+                // Add new page except for the last page
+                if (pageIndex < totalPages - 1) {
+                    document.newPage();
+                }
+            }
+
+            document.close();
+        } catch (DocumentException e) {
+            log.error("Error creating PDF: {}", e.getMessage(), e);
+        }
+
+        return outputStream.toByteArray();
+    }
+
+    @Override
+    public byte[] createReceiptWithFourPerPage(String schoolName) {
+        return new byte[0];
+    }
+
+    @Override
+    public byte[] createPdfFromBooks(List<Book> books) {
+        return new byte[0];
+    }
+
+    @Override
+    public byte[] createLabelType1Pdf(String librarySymbol, List<Book> books) {
+        return new byte[0];
+    }
+
+    @Override
+    public byte[] createLabelType2Pdf(List<Book> books) {
+        return new byte[0];
+    }
+
+    @Override
+    public byte[] createBookListPdf(List<Book> books) {
+        return new byte[0];
+    }
+
+    @Override
+    public byte[] createOverdueListPdf(List<BorrowReceipt> borrowReceipts) {
+        return new byte[0];
+    }
+}
