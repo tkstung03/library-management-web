@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 
 @Log4j2
@@ -348,7 +349,156 @@ public class PdfServiceImpl implements PdfService {
 
     @Override
     public byte[] createReceiptWithFourPerPage(String schoolName) {
-        return new byte[0];
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Document document = new Document(PageSize.A4, 10, 10, 10, 10);
+
+        try {
+            PdfWriter.getInstance(document, outputStream);
+            document.open();
+
+            int receiptsPerPage = 4;
+            int totalBorrowReceipts = 4;
+            int totalPages = (int) Math.ceil((double) totalBorrowReceipts / receiptsPerPage);
+
+            for (int pageIndex = 0; pageIndex < totalPages; pageIndex++) {
+                PdfPTable mainTable = new PdfPTable(2);
+                mainTable.setWidthPercentage(100);
+                mainTable.setSpacingBefore(10f);
+                mainTable.setSpacingAfter(10f);
+
+                int lop = Math.min((pageIndex + 1) * receiptsPerPage, totalBorrowReceipts);
+                for (int i = pageIndex * receiptsPerPage; i < lop; i++) {
+                    PdfPCell receiptContainer = new PdfPCell();
+                    receiptContainer.setPadding(10);
+                    receiptContainer.setBorder(Rectangle.BOX);
+                    receiptContainer.setBorderColor(BaseColor.GRAY);
+
+                    //Tiêu đề
+                    Paragraph title = new Paragraph(schoolName.toUpperCase(), boldFontLarge);
+                    title.setAlignment(Element.ALIGN_CENTER);
+                    receiptContainer.addElement(title);
+
+                    Paragraph receiptInfo = new Paragraph("PHIẾU MƯỢN TÀI LIỆU", normalFontLarge);
+                    receiptInfo.setAlignment(Element.ALIGN_CENTER);
+                    receiptContainer.addElement(receiptInfo);
+
+                    receiptContainer.addElement(new Paragraph("\n"));
+
+                    Paragraph receiptNumber = new Paragraph(adjustLength("Số phiếu:", 20), normalFontMedium);
+                    receiptNumber.setAlignment(Element.ALIGN_RIGHT);
+                    receiptContainer.addElement(receiptNumber);
+
+                    // Thông tin người mượn
+                    Paragraph readerName = new Paragraph(adjustLength("Họ và tên:", 60), normalFontMedium);
+                    readerName.setAlignment(Element.ALIGN_LEFT);
+                    receiptContainer.addElement(readerName);
+
+                    Paragraph readerCard = new Paragraph(adjustLength("Mã số thẻ:", 60), normalFontMedium);
+                    readerCard.setAlignment(Element.ALIGN_LEFT);
+                    receiptContainer.addElement(readerCard);
+
+                    Paragraph borrowDate = new Paragraph(adjustLength("Ngày mượn:", 60), normalFontMedium);
+                    borrowDate.setAlignment(Element.ALIGN_LEFT);
+                    receiptContainer.addElement(borrowDate);
+
+                    Paragraph dueDate = new Paragraph(adjustLength("Ngày hẹn trả:", 60), normalFontMedium);
+                    dueDate.setAlignment(Element.ALIGN_LEFT);
+                    receiptContainer.addElement(dueDate);
+
+                    receiptContainer.addElement(new Paragraph("\n"));
+
+                    Paragraph documentListLabel = new Paragraph("Danh sách tài liệu:", normalFontMedium);
+                    documentListLabel.setAlignment(Element.ALIGN_LEFT);
+                    receiptContainer.addElement(documentListLabel);
+
+                    // Danh sách sách mượn
+                    PdfPTable bookTable = new PdfPTable(3);
+                    bookTable.setWidthPercentage(100);
+                    bookTable.setSpacingBefore(10f);
+                    bookTable.setWidths(new float[]{1, 6, 3});
+
+                    // Header bảng
+                    PdfPCell headerSTT = new PdfPCell(new Phrase("STT", boldFontSmall));
+                    headerSTT.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    headerSTT.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                    bookTable.addCell(headerSTT);
+
+                    PdfPCell headerTitle = new PdfPCell(new Phrase("Tên sách", boldFontSmall));
+                    headerTitle.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    headerTitle.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                    bookTable.addCell(headerTitle);
+
+                    PdfPCell headerCode = new PdfPCell(new Phrase("Mã sách", boldFontSmall));
+                    headerCode.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    headerCode.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                    bookTable.addCell(headerCode);
+
+                    // Dữ liệu sách mượn
+                    for (int k = 0; k < 4; k++) {
+                        PdfPCell sttCell = new PdfPCell(new Phrase(String.valueOf(k + 1), boldFontMedium));
+                        sttCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        bookTable.addCell(sttCell);
+
+                        bookTable.addCell(new PdfPCell(new Phrase("", normalFontMedium)));
+                        bookTable.addCell(new PdfPCell(new Phrase("", normalFontMedium)));
+                    }
+                    receiptContainer.addElement(bookTable);
+
+                    // Chữ ký
+                    PdfPTable signatureTable = new PdfPTable(2);
+                    signatureTable.setWidthPercentage(100);
+
+                    PdfPCell borrowerLabelCell = new PdfPCell(new Phrase("Người mượn", normalFontMedium));
+                    borrowerLabelCell.setBorder(Rectangle.NO_BORDER);
+                    borrowerLabelCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    signatureTable.addCell(borrowerLabelCell);
+
+                    PdfPCell issuerLabelCell = new PdfPCell(new Phrase("Người lập phiếu", normalFontMedium));
+                    issuerLabelCell.setBorder(Rectangle.NO_BORDER);
+                    issuerLabelCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    signatureTable.addCell(issuerLabelCell);
+
+                    PdfPCell borrowerSignatureCell = new PdfPCell(new Phrase(" ", normalFontMedium));
+                    borrowerSignatureCell.setBorder(Rectangle.NO_BORDER);
+                    borrowerSignatureCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    signatureTable.addCell(borrowerSignatureCell);
+
+                    PdfPCell issuerSignatureCell = new PdfPCell(new Phrase(" ", normalFontMedium));
+                    issuerSignatureCell.setBorder(Rectangle.NO_BORDER);
+                    issuerSignatureCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    signatureTable.addCell(issuerSignatureCell);
+
+                    receiptContainer.addElement(signatureTable);
+
+                    mainTable.addCell(receiptContainer);
+                }
+
+                document.add(mainTable);
+
+                // Add new page except for the last page
+                if (pageIndex < totalPages - 1) {
+                    document.newPage();
+                }
+            }
+
+            document.close();
+        } catch (DocumentException e) {
+            log.error("Error creating PDF: {}", e.getMessage(), e);
+        }
+
+        return outputStream.toByteArray();
+    }
+
+    private String adjustLength(String input, int targetLength) {
+        if (input.length() >= targetLength) {
+            return input.substring(0, targetLength);
+        } else {
+            StringBuilder result = new StringBuilder(input);
+            while (result.length() < targetLength) {
+                result.append(".");
+            }
+            return result.toString();
+        }
     }
 
     @Override
@@ -358,7 +508,82 @@ public class PdfServiceImpl implements PdfService {
 
     @Override
     public byte[] createLabelType1Pdf(String librarySymbol, List<Book> books) {
-        return new byte[0];
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Document document = new Document(PageSize.A4, 10, 10, 10, 10);
+
+        try {
+            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+            document.open();
+
+            int labelsPerRow = 6;
+            int totalLabels = books.size();
+
+            PdfPTable table = new PdfPTable(labelsPerRow);
+            table.setWidthPercentage(100);
+            table.setSpacingBefore(5f);
+            table.setSpacingAfter(5f);
+
+            float[] columnWidths = new float[labelsPerRow];
+            Arrays.fill(columnWidths, 1f);
+            table.setWidths(columnWidths);
+
+            for (int i = 0; i < totalLabels; i++) {
+                Book book = books.get(i);
+
+                PdfPTable labelTable = new PdfPTable(1);
+                labelTable.setWidthPercentage(100);
+
+                PdfPCell nameCell = new PdfPCell(new Phrase(librarySymbol.toUpperCase(), boldFontMedium));
+                nameCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                nameCell.setBorder(Rectangle.BOX);
+                labelTable.addCell(nameCell);
+
+                ClassificationSymbol classificationSymbol = book.getBookDefinition().getClassificationSymbol();
+                PdfPCell khplCell = new PdfPCell(new Phrase(classificationSymbol != null ? classificationSymbol.getCode() : "KHPL", boldFontMedium));
+                khplCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                khplCell.setBorder(Rectangle.BOX);
+                labelTable.addCell(khplCell);
+
+                PdfPCell sdkcbCell = new PdfPCell(new Phrase(book.getBookCode(), boldFontMedium));
+                sdkcbCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                sdkcbCell.setBorder(Rectangle.BOX);
+                labelTable.addCell(sdkcbCell);
+
+                PdfPCell barcodeCell = new PdfPCell();
+                barcodeCell.setBorder(Rectangle.BOX);
+                barcodeCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+                Barcode128 barcode = new Barcode128();
+                barcode.setCode(book.getBookCode());
+                barcode.setFont(null);
+                barcode.setBarHeight(30f);
+                barcode.setX(1f);
+
+                Image barcodeImage = barcode.createImageWithBarcode(writer.getDirectContent(), null, null);
+                barcodeImage.scalePercent(60);
+                barcodeImage.setAlignment(Image.ALIGN_CENTER);
+                barcodeCell.addElement(barcodeImage);
+                labelTable.addCell(barcodeCell);
+
+                table.addCell(labelTable);
+            }
+
+            int remainingCells = labelsPerRow - (totalLabels % labelsPerRow);
+            if (remainingCells != labelsPerRow) {
+                for (int i = 0; i < remainingCells; i++) {
+                    PdfPCell emptyCell = new PdfPCell();
+                    emptyCell.setBorder(Rectangle.NO_BORDER);
+                    table.addCell(emptyCell);
+                }
+            }
+
+            document.add(table);
+            document.close();
+        } catch (DocumentException e) {
+            log.error("Error creating LabelType1 PDF: {}", e.getMessage(), e);
+        }
+
+        return outputStream.toByteArray();
     }
 
     @Override
