@@ -107,7 +107,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public CommonResponseDto update(AuthorRequestDto requestDto, Long id, String userId) {
+    public CommonResponseDto update(Long id, AuthorRequestDto requestDto, String userId) {
         Author author = findById(id);
 
         if (!Objects.equals(author.getCode(), requestDto.getCode())

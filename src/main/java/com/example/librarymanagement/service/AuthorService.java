@@ -11,7 +11,7 @@ public interface AuthorService {
 
     CommonResponseDto save(AuthorRequestDto requestDto, String userId);
 
-    CommonResponseDto update(AuthorRequestDto requestDto, Long id, String userId);
+    CommonResponseDto update(Long id, AuthorRequestDto requestDto, String userId);
 
     CommonResponseDto delete(Long id,String userId);
 
