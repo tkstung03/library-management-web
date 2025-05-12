@@ -9,7 +9,7 @@ import com.example.librarymanagement.domain.entity.CategoryGroup;
 
 import java.util.List;
 
-public interface CateforyGroupService {
+public interface CategoryGroupService {
     void init(String categoryGroupCsvPath);
 
     CommonResponseDto save(CategoryGroupRequestDto requestDto, String userId);

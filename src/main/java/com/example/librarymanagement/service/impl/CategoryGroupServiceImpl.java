@@ -17,7 +17,7 @@ import com.example.librarymanagement.exception.BadRequestException;
 import com.example.librarymanagement.exception.ConflictException;
 import com.example.librarymanagement.exception.NotFoundException;
 import com.example.librarymanagement.repository.CategoryGroupRepository;
-import com.example.librarymanagement.service.CateforyGroupService;
+import com.example.librarymanagement.service.CategoryGroupService;
 import com.example.librarymanagement.service.LogService;
 import com.example.librarymanagement.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ import java.util.List;
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class CategoryGroupServiceImpl implements CateforyGroupService {
+public class CategoryGroupServiceImpl implements CategoryGroupService {
 
     private static final String TAG = "Quản lý nhóm danh mục";
 
