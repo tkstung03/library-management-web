@@ -30,7 +30,7 @@ public class LibrarymanagementApplication {
         String port = env.getProperty("server.port");
         log.info("-------------------------START {} Application------------------------------", appName);
         log.info("   Application         : {}", appName);
-        log.info("   Url swagger-ui      : http://localhost:{}swagger-ui.html", port);
+        log.info("   Url swagger-ui      : http://localhost:{}/swagger-ui.html", port);
         log.info("-------------------------START SUCCESS {} Application----------------------", appName);
     }
 
