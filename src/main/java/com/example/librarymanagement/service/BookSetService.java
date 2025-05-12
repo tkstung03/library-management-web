@@ -12,7 +12,7 @@ public interface BookSetService {
 
     CommonResponseDto save(BookSetRequestDto requestDto, String userId);
 
-    CommonResponseDto update(BookSetRequestDto requestDto, Long id, String userId);
+    CommonResponseDto update(Long id, BookSetRequestDto requestDto, String userId);
 
     CommonResponseDto delete(Long id, String userId);
 

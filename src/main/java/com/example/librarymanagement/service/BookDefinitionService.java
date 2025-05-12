@@ -26,7 +26,7 @@ public interface BookDefinitionService {
 
     CommonResponseDto delete(Long id, String userId);
 
-    PaginationResponseDto<BookDefinitionResponseDto> finAll(PaginationFullRequestDto requestDto);
+    PaginationResponseDto<BookDefinitionResponseDto> findAll(PaginationFullRequestDto requestDto);
 
     List<BookDefinitionResponseDto> findByIds(Set<Long> ids);
 
