@@ -76,7 +76,7 @@ public class AuthorServiceImpl implements AuthorService {
                 author.setAddress(values[8].isEmpty() ? null : values[8]);
                 author.setNotes(values[9].isEmpty() ? null : values[9]);
 
-                if (!authorRepository.existByCode(author.getCode())) {
+                if (!authorRepository.existsByCode(author.getCode())) {
                     authorRepository.save(author);
                     log.info("Successfully saved author: {} (Code: {})", author.getFullName(), author.getCode());
                 }
@@ -93,7 +93,7 @@ public class AuthorServiceImpl implements AuthorService {
     public CommonResponseDto save(AuthorRequestDto requestDto, String userId) {
         Author author = authorMapper.toAuthor(requestDto);
 
-        if (authorRepository.existByCode(author.getCode())){
+        if (authorRepository.existsByCode(author.getCode())){
             throw new ConflictException(ErrorMessage.Author.ERR_DUPLICATE_CODE);
         }
 
@@ -111,7 +111,7 @@ public class AuthorServiceImpl implements AuthorService {
         Author author = findById(id);
 
         if (!Objects.equals(author.getCode(), requestDto.getCode())
-            && authorRepository.existByCode(requestDto.getCode())) {
+            && authorRepository.existsByCode(requestDto.getCode())) {
             throw new ConflictException(ErrorMessage.Author.ERR_DUPLICATE_CODE);
         }
 

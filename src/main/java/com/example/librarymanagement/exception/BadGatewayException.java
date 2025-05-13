@@ -1,5 +1,10 @@
 package com.example.librarymanagement.exception;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class BadGatewayException extends RuntimeException {
 
     private Object[] params;

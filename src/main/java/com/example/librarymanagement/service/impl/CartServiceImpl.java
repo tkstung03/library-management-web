@@ -41,7 +41,7 @@ public class CartServiceImpl implements CartService {
     private int maxBooksInCart;
 
     private Cart getEntity(String cardNumber) {
-        return cartRepository.findReaderCardNumber(cardNumber).orElseGet(() -> {
+        return cartRepository.findByReaderCardNumber(cardNumber).orElseGet(() -> {
             Cart cart = new Cart();
             Reader reader = readerRepository.findByCardNumber(cardNumber)
                     .orElseThrow(() -> new NotFoundException(ErrorMessage.Reader.ERR_NOT_FOUND_CARD_NUMBER, cardNumber));

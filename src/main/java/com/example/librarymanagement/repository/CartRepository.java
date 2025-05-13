@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Long>, JpaSpecificationExecutor<Cart> {
 
-    Optional<Cart> findReaderCardNumber(String cardNumber);
+    Optional<Cart> findByReaderCardNumber(String cardNumber);
 }

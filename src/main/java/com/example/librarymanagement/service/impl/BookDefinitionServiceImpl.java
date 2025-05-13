@@ -118,7 +118,7 @@ public class BookDefinitionServiceImpl implements BookDefinitionService {
                     continue;
                 }
 
-                if (!bookDefinitionRepository.existByBookNumber(bookDefinition.getBookNumber())) {
+                if (!bookDefinitionRepository.existsByBookNumber(bookDefinition.getBookNumber())) {
                     bookDefinitionRepository.save(bookDefinition);
                     log.info("Successfully saved book definition: '{}' (Book number: {}, Category: {}",
                             bookDefinition.getTitle(), bookDefinition.getBookNumber(), bookDefinition.getCategory().getCategoryName());
@@ -136,7 +136,7 @@ public class BookDefinitionServiceImpl implements BookDefinitionService {
     public CommonResponseDto save(BookDefinitionRequestDto requestDto, MultipartFile file, String userId) {
         uploadFileUtil.checkImageIsValid(file);
 
-        if (bookDefinitionRepository.existByBookNumber(requestDto.getBookNumber())){
+        if (bookDefinitionRepository.existsByBookNumber(requestDto.getBookNumber())){
             throw new BadRequestException(ErrorMessage.BookDefinition.ERR_DUPLICATE_CODE, requestDto.getBookNumber());
         }
 
@@ -207,7 +207,7 @@ public class BookDefinitionServiceImpl implements BookDefinitionService {
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.BookDefinition.ERR_NOT_FOUND_ID, id));
 
         //Kiểm tra kí hiệu tên sách
-        if (!Objects.equals(bookDefinition.getBookNumber(), requestDto.getBookNumber()) && bookDefinitionRepository.existByBookNumber(requestDto.getBookNumber())) {
+        if (!Objects.equals(bookDefinition.getBookNumber(), requestDto.getBookNumber()) && bookDefinitionRepository.existsByBookNumber(requestDto.getBookNumber())) {
             throw new BadRequestException(ErrorMessage.BookDefinition.ERR_DUPLICATE_CODE, requestDto.getBookNumber());
         }
 
@@ -349,7 +349,7 @@ public class BookDefinitionServiceImpl implements BookDefinitionService {
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.BookDefinition.ERR_NOT_FOUND_ID, id));
     }
     @Override
-    public PaginationResponseDto<BookDefinitionResponseDto> finAll(PaginationFullRequestDto requestDto) {
+    public PaginationResponseDto<BookDefinitionResponseDto> findAll(PaginationFullRequestDto requestDto) {
         Pageable pageable = PaginationUtil.buildPageable(requestDto, SortByDataConstant.BOOK_DEFINITION);
 
         Specification<BookDefinition> spec = Specification.where(baseFilterBookDefinitions(requestDto.getKeyword(), requestDto.getSearchBy(), requestDto.getActiveFlag()));

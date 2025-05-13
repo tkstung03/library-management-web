@@ -16,7 +16,7 @@ import java.util.Set;
 @Repository
 public interface BookDefinitionRepository extends JpaRepository<BookDefinition, Long>, JpaSpecificationExecutor<BookDefinition> {
     //Kiểm tra tồn tại
-    boolean existByBookNumber(String bookNumber);
+    boolean existsByBookNumber(String bookNumber);
 
     Optional<BookDefinition> findByIdAndActiveFlagIsTrue(Long Id);
 

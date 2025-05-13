@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.util.Optional;
 
 public interface AuthorRepository extends JpaRepository<Author, Long>, JpaSpecificationExecutor<Author> {
-    boolean existByCode(String code);
+    boolean existsByCode(String code);
 
     Optional<Author> findByIdAndActiveFlagIsTrue(Long id);
 }

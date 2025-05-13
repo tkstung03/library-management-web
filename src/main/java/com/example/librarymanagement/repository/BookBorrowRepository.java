@@ -16,7 +16,7 @@ public interface BookBorrowRepository extends JpaRepository<BookBorrow, Long>, J
 
     //Lấy top 5 sách được mượn nhiều nhất
     @Query("""
-            SELECT new com.example.librarymanagement.domain.dto.response.statistics.PublicatonResponseDto(bd.title, COUNT(bb.id))
+            SELECT new com.example.librarymanagement.domain.dto.response.statistics.PublicationResponseDto(bd.title, COUNT(bb.id))
                         FROM BookBorrow bb 
                         JOIN bb.book b 
                         JOIN b.bookDefinition bd 

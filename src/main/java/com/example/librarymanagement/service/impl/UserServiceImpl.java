@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService {
             validatePassword(password);
         }
         // Kiểm tra trùng lặp username hoặc email
-        if (userRepository.existsByUserName(requestDto.getUsername())) {
+        if (userRepository.existsByUsername(requestDto.getUsername())) {
             throw new ConflictException(ErrorMessage.Auth.ERR_DUPLICATE_USERNAME, requestDto.getUsername());
         }
         if (userRepository.existsByEmail(requestDto.getEmail())) {
@@ -129,7 +129,7 @@ public class UserServiceImpl implements UserService {
         User user = getEntity(id);
 
         // Kiểm tra trùng lặp username hoặc email nếu có thay đổi
-        if (!Objects.equals(user.getUsername(), requestDto.getUsername()) && userRepository.existsByUserName(requestDto.getUsername())) {
+        if (!Objects.equals(user.getUsername(), requestDto.getUsername()) && userRepository.existsByUsername(requestDto.getUsername())) {
             throw new ConflictException(ErrorMessage.Auth.ERR_DUPLICATE_USERNAME, requestDto.getUsername());
         }
         if (!Objects.equals(user.getEmail(), requestDto.getEmail()) && userRepository.existsByEmail(requestDto.getEmail())) {

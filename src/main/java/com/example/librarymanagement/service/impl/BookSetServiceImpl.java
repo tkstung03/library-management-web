@@ -100,7 +100,7 @@ public class BookSetServiceImpl implements BookSetService {
     }
 
     @Override
-    public CommonResponseDto update(BookSetRequestDto requestDto, Long id, String userId) {
+    public CommonResponseDto update( Long id, BookSetRequestDto requestDto, String userId) {
         BookSet bookSet = findById(id);
 
         if (!Objects.equals(bookSet.getName(),requestDto.getName()) && bookSetRepository.existsByName(requestDto.getName())) {
