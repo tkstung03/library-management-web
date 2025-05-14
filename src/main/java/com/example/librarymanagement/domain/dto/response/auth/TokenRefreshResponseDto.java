@@ -1,7 +1,9 @@
 package com.example.librarymanagement.domain.dto.response.auth;
 
 import com.example.librarymanagement.constant.CommonConstant;
+import lombok.Getter;
 
+@Getter
 public class TokenRefreshResponseDto {
 
     private final String tokenType = CommonConstant.TOKEN_TYPE;

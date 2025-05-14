@@ -69,7 +69,7 @@ public class BookController {
 
     @Operation(summary = "API Get Book By ID")
     @PreAuthorize("hasRole('ROLE_MANAGE_BOOK')")
-    @PostMapping(UrlConstant.Book.GET_BY_ID)
+    @GetMapping(UrlConstant.Book.GET_BY_ID)
     public ResponseEntity<?> getBookById(@PathVariable Long id) {
         return VsResponseUtil.success(bookService.findById(id));
     }

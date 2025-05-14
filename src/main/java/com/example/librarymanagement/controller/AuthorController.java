@@ -66,10 +66,10 @@ public class AuthorController {
         return VsResponseUtil.success(authorService.findById(id));
     }
 
-    @Operation
+    @Operation(summary = "API Toggle Active Status of Author")
     @PreAuthorize("hasRole('ROLE_MANAGE_AUTHOR')")
     @PatchMapping(UrlConstant.Author.TOGGLE_ACTIVE)
-    public ResponseEntity<?> toggleActivityStatus(@PathVariable Long id,
+    public ResponseEntity<?> toggleActiveStatus(@PathVariable Long id,
                                                   @CurrentUser CustomUserDetails userDetails) {
         return VsResponseUtil.success(authorService.toggleActivityStatus(id, userDetails.getUserId()));
     }

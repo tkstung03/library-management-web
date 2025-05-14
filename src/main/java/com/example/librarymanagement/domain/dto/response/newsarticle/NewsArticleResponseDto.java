@@ -29,6 +29,6 @@ public class NewsArticleResponseDto {
         this.title = newsArticle.getTitle();
         this.titleSlug = newsArticle.getTitleSlug();
         this.description = newsArticle.getDescription();
-        this.author = newsArticle.getUser().getFullName();
+        this.author = "Admin";
     }
 }

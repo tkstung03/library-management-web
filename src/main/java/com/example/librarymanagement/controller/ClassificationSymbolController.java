@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Tag(name = "Classification Symbol")
 public class ClassificationSymbolController {
+
     ClassificationSymbolService classificationSymbolService;
 
     @Operation(summary = "API Create Classification Symbol")

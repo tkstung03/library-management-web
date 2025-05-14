@@ -25,6 +25,8 @@ public class CommonConstant {
     public static final String EMPTY_STRING = "";
     public static final String BEARER_TOKEN = "Bearer";
 
-
+    public static final String CONTENT_TYPE_DOCUMENT = "txt doc pdf ppt pps xlsx xls docx";
+    public static final String CONTENT_TYPE_IMAGE = "png jpg jpeg webp gif";
+    public static final String CONTENT_TYPE_VIDEO = "mp4 mpg mpe mpeg webm mov m4v";
 
 }
