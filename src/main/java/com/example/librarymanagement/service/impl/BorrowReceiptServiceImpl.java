@@ -381,7 +381,7 @@ public class BorrowReceiptServiceImpl implements BorrowReceiptService {
             return pdfService.createReceiptWithFourPerPage(schoolName);
         }
 
-        User user = userRepository.findById(Long.valueOf(userId)).orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID, userId));
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID, userId));
 
         List<BorrowReceipt> borrowReceipts = borrowReceiptRepository.findAllByIdIn(requestDto.getBorrowIds());
         if (borrowReceipts.isEmpty()) {

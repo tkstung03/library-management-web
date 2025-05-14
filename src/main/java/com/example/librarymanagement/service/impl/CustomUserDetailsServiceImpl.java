@@ -47,7 +47,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailService {
     @Override
     @Transactional
     public UserDetails loadUserByUserId(String userId) throws UsernameNotFoundException {
-        User user = userRepository.findById(Long.valueOf(userId))
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException(messageSource.getMessage(ErrorMessage.User.ERR_NOT_FOUND_ID, new String[]{userId}, LocaleContextHolder.getLocale())));
 
         return UserDetailsFactory.fromUser(user);

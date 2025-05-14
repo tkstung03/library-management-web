@@ -184,8 +184,7 @@ public class AuthServiceImpl implements AuthService {
 
         String userId = jwtTokenProvider.extractSubjectFromJwt(refreshToken);
         if (userId != null) {
-            Long id = Long.parseLong(userId);
-            User user = userRepository.findById(id).orElseThrow(() -> new BadRequestException(ErrorMessage.Auth.ERR_INVALID_REFRESH_TOKEN));
+            User user = userRepository.findById(userId).orElseThrow(() -> new BadRequestException(ErrorMessage.Auth.ERR_INVALID_REFRESH_TOKEN));
             CustomUserDetails userDetails = UserDetailsFactory.fromUser(user);
 
             String newAccessToken = jwtTokenProvider.generateToken(userDetails, false);
@@ -333,7 +332,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public CurrentUserLoginResponseDto getCurrentUser(CustomUserDetails userDetails) {
         if (userDetails.getUserId() != null) {
-            User user = userRepository.findById(Long.valueOf(userDetails.getUserId()))
+            User user = userRepository.findById(userDetails.getUserId())
                     .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID, userDetails.getUserId()));
 
             return CurrentUserLoginResponseDto.create(user);

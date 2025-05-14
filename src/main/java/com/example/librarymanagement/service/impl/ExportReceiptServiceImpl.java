@@ -1,17 +1,16 @@
 package com.example.librarymanagement.service.impl;
 
-import com.example.librarymanagement.constant.BookCondition;
-import com.example.librarymanagement.constant.ErrorMessage;
-import com.example.librarymanagement.constant.EventConstants;
-import com.example.librarymanagement.constant.SuccessMessage;
+import com.example.librarymanagement.constant.*;
 import com.example.librarymanagement.domain.dto.common.CommonResponseDto;
 import com.example.librarymanagement.domain.dto.pagination.PaginationFullRequestDto;
 import com.example.librarymanagement.domain.dto.pagination.PaginationResponseDto;
+import com.example.librarymanagement.domain.dto.pagination.PagingMeta;
 import com.example.librarymanagement.domain.dto.request.receipt.ExportReceiptRequestDto;
 import com.example.librarymanagement.domain.dto.response.receipt.ExportReceiptResponseDto;
 import com.example.librarymanagement.domain.entity.Book;
 import com.example.librarymanagement.domain.entity.ExportReceipt;
 import com.example.librarymanagement.domain.mapper.ExportReceiptMapper;
+import com.example.librarymanagement.domain.specification.ExportReceiptSpecification;
 import com.example.librarymanagement.exception.BadRequestException;
 import com.example.librarymanagement.exception.ConflictException;
 import com.example.librarymanagement.exception.NotFoundException;
@@ -19,12 +18,16 @@ import com.example.librarymanagement.repository.BookRepository;
 import com.example.librarymanagement.repository.ExportReceiptRepository;
 import com.example.librarymanagement.service.ExportReceiptService;
 import com.example.librarymanagement.service.LogService;
+import com.example.librarymanagement.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -157,16 +160,56 @@ public class ExportReceiptServiceImpl implements ExportReceiptService {
 
     @Override
     public CommonResponseDto delete(Long id, String userId) {
-        return null;
+
+        ExportReceipt exportReceipt = getEntity(id);
+
+        // Xóa sách liên kết với phiếu xuất
+        exportReceipt.getBooks().forEach(book -> {
+            book.setExportReceipt(null);
+            bookRepository.save(book);
+        });
+        exportReceipt.getBooks().clear();
+
+        exportReceiptRepository.delete(exportReceipt);
+
+        logService.createLog(TAG, EventConstants.DELETE, "Xóa phiếu xuất: " + exportReceipt.getReceiptNumber(), userId);
+
+        String message = messageSource.getMessage(SuccessMessage.DELETE, null, LocaleContextHolder.getLocale());
+        return new CommonResponseDto(message);
     }
 
     @Override
     public PaginationResponseDto<ExportReceiptResponseDto> findAll(PaginationFullRequestDto requestDto) {
-        return null;
+
+        Pageable pageable = PaginationUtil.buildPageable(requestDto, SortByDataConstant.EXPORT_RECEIPT);
+
+        Page<ExportReceipt> page = exportReceiptRepository.findAll(
+                ExportReceiptSpecification.filterExportReceipts(requestDto.getKeyword(), requestDto.getSearchBy()),
+                pageable);
+
+        List<ExportReceiptResponseDto> items = page.getContent().stream()
+                .map(ExportReceiptResponseDto::new)
+                .toList();
+
+        PagingMeta pagingMeta = PaginationUtil.buildPagingMeta(requestDto, SortByDataConstant.EXPORT_RECEIPT, page);
+
+        PaginationResponseDto<ExportReceiptResponseDto> responseDto = new PaginationResponseDto<>();
+        responseDto.setItems(items);
+        responseDto.setMeta(pagingMeta);
+
+        return responseDto;
     }
 
     @Override
     public ExportReceiptResponseDto findById(Long id) {
-        return null;
+
+        ExportReceipt exportReceipt = getEntity(id);
+        ExportReceiptResponseDto responseDto = new ExportReceiptResponseDto(exportReceipt);
+
+        for (Book book : exportReceipt.getBooks()) {
+            responseDto.getBookIds().add(book.getId());
+        }
+
+        return responseDto;
     }
 }

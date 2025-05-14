@@ -31,7 +31,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
     @Override
     public Notifications createNotification(String userId, String title, String message) {
-        User user = userRepository.findById(Long.valueOf(userId)).orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID, userId));
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID, userId));
 
         Notifications notifications = new Notifications();
         notifications.setUser(user);

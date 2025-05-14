@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
     private final UploadFileUtil uploadFileUtil;
 
     private User getEntity(String id) {
-        return userRepository.findById(Long.valueOf(id))
+        return userRepository.findById(id)
                 .orElseThrow(() ->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID, id));
     }
 
