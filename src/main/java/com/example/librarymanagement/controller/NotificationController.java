@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestApiV1
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@Tag(name = "Notification")
+@Tag(name = "Notifications")
 public class NotificationController {
     NotificationService notificationService;
 
@@ -38,8 +38,8 @@ public class NotificationController {
 
     @Operation(summary = "API Delete Notification")
     @DeleteMapping(UrlConstant.Notification.DELETE)
-    public ResponseEntity<?> deleteNotification(@PathVariable Long notificationId, @CurrentUser CustomUserDetails userDetails) {
-        return VsResponseUtil.success(notificationService.deleteNotification(notificationId, userDetails.getUserId()));
+    public ResponseEntity<?> deleteNotifications(@PathVariable Long notificationId, @CurrentUser CustomUserDetails userDetails) {
+        return VsResponseUtil.success(notificationService.deleteNotifications(notificationId, userDetails.getUserId()));
     }
 
 }

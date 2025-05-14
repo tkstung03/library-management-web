@@ -60,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UserDetails userDetails = customUserDetailService.loadUserByUserId(userId);
                 setAuthentication(userDetails, request);
             } else if (cardNumber != null) {
-                UserDetails userDetails = customUserDetailService.loadUserByCartNumber(cardNumber);
+                UserDetails userDetails = customUserDetailService.loadUserByCardNumber(cardNumber);
                 setAuthentication(userDetails, request);
             }
         } catch (UsernameNotFoundException e){

@@ -55,7 +55,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByCartNumber(String cardNumber) throws UsernameNotFoundException {
+    public UserDetails loadUserByCardNumber(String cardNumber) throws UsernameNotFoundException {
         Reader reader = readerRepository.findByCardNumber(cardNumber)
                 .orElseThrow(() -> new UsernameNotFoundException(messageSource.getMessage(ErrorMessage.Reader.ERR_NOT_FOUND_CARD_NUMBER, new String[]{cardNumber}, LocaleContextHolder.getLocale())));
 

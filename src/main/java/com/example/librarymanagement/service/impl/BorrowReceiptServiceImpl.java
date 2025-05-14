@@ -107,6 +107,7 @@ public class BorrowReceiptServiceImpl implements BorrowReceiptService {
     }
 
     @Override
+    @Transactional
     public CommonResponseDto save(BorrowReceiptRequestDto requestDto, String userId) {
         //Kiểm tra số phiếu mượn
         if (borrowReceiptRepository.existsByReceiptNumber(requestDto.getReceiptNumber())) {

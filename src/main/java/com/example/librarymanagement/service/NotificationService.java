@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface NotificationService {
 
-    Notifications createNotification(String userId, String title, String message);
+    Notifications createNotifications(String userId, String title, String message);
 
     List<Notifications> getUserNotifications(String userId);
 
     CommonResponseDto markAsRead(Long notificationId, String userId);
 
-    CommonResponseDto deleteNotification(Long notificationId, String userId);
+    CommonResponseDto deleteNotifications(Long notificationId, String userId);
 }

@@ -30,7 +30,7 @@ public class NotificationServiceImpl implements NotificationService {
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.Notification.ERR_NOT_FOUND_ID, userId));
     }
     @Override
-    public Notifications createNotification(String userId, String title, String message) {
+    public Notifications createNotifications(String userId, String title, String message) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID, userId));
 
         Notifications notifications = new Notifications();
@@ -59,7 +59,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public CommonResponseDto deleteNotification(Long notificationId, String userId) {
+    public CommonResponseDto deleteNotifications(Long notificationId, String userId) {
         Notifications notifications = getEntity(notificationId, userId);
 
         notificationRepository.delete(notifications);

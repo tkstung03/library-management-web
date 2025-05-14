@@ -8,6 +8,6 @@ public interface CustomUserDetailService extends UserDetailsService {
 
     UserDetails loadUserByUserId(String userId) throws UsernameNotFoundException;
 
-    UserDetails loadUserByCartNumber(String cardNumber) throws UsernameNotFoundException;
+    UserDetails loadUserByCardNumber(String cardNumber) throws UsernameNotFoundException;
 
 }

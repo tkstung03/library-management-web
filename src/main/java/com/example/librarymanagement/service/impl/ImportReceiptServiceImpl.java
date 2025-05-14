@@ -31,6 +31,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -123,6 +124,7 @@ public class ImportReceiptServiceImpl implements ImportReceiptService {
     }
 
     @Override
+    @Transactional
     public CommonResponseDto update(Long id, ImportReceiptRequestDto requestDto, String userId) {
         ImportReceipt importReceipt = getEntity(id);
 
