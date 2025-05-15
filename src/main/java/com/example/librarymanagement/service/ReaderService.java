@@ -3,7 +3,7 @@ package com.example.librarymanagement.service;
 import com.example.librarymanagement.domain.dto.common.CommonResponseDto;
 import com.example.librarymanagement.domain.dto.pagination.PaginationFullRequestDto;
 import com.example.librarymanagement.domain.dto.pagination.PaginationResponseDto;
-import com.example.librarymanagement.domain.dto.request.reader.CreateReaderCardRequestDto;
+import com.example.librarymanagement.domain.dto.request.reader.CreateReaderCardsRequestDto;
 import com.example.librarymanagement.domain.dto.request.reader.ReaderRequestDto;
 import com.example.librarymanagement.domain.dto.response.reader.ReaderDetailResponseDto;
 import com.example.librarymanagement.domain.dto.response.reader.ReaderResponseDto;
@@ -24,7 +24,7 @@ public interface ReaderService {
 
     ReaderResponseDto findByCardNumber(String cardNumber);
 
-    byte[] generateReaderCards(CreateReaderCardRequestDto requestDto);
+    byte[] generateReaderCards(CreateReaderCardsRequestDto requestDto);
 
     ReaderDetailResponseDto getReaderDetailsByCardNumber(String cardNumber);
 }

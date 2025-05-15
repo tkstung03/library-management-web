@@ -5,7 +5,7 @@ import com.example.librarymanagement.annotation.RestApiV1;
 import com.example.librarymanagement.base.VsResponseUtil;
 import com.example.librarymanagement.constant.UrlConstant;
 import com.example.librarymanagement.domain.dto.pagination.PaginationFullRequestDto;
-import com.example.librarymanagement.domain.dto.request.reader.CreateReaderCardRequestDto;
+import com.example.librarymanagement.domain.dto.request.reader.CreateReaderCardsRequestDto;
 import com.example.librarymanagement.domain.dto.request.reader.ReaderRequestDto;
 import com.example.librarymanagement.security.CustomUserDetails;
 import com.example.librarymanagement.service.ReaderService;
@@ -88,7 +88,7 @@ public class ReaderController {
     @Operation(summary = "API Generate Cards Reader")
     @PreAuthorize("hasRole('ROLE_MANAGE_READER')")
     @PostMapping(UrlConstant.Reader.PRINT_CARDS)
-    public ResponseEntity<byte[]> generateReaderCards(@Valid @RequestBody CreateReaderCardRequestDto requestDto) {
+    public ResponseEntity<byte[]> generateReaderCards(@Valid @RequestBody CreateReaderCardsRequestDto requestDto) {
         byte[] pdfBytes = readerService.generateReaderCards(requestDto);
 
         HttpHeaders headers = new HttpHeaders();

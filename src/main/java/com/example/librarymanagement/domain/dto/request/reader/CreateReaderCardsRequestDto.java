@@ -15,11 +15,10 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateReaderCardRequestDto {
+public class CreateReaderCardsRequestDto {
 
     @NotNull(message = ErrorMessage.INVALID_ARRAY_IS_REQUIRED)
     @Size(min = 1, max = 100, message = ErrorMessage.INVALID_ARRAY_LENGTH)
-    private Set<@NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED) Long>
-            readerIds = new HashSet<>();
+    private Set<@NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED) Long> readerIds = new HashSet<>();
 
 }

@@ -5,7 +5,7 @@ import com.example.librarymanagement.domain.dto.common.CommonResponseDto;
 import com.example.librarymanagement.domain.dto.pagination.PaginationFullRequestDto;
 import com.example.librarymanagement.domain.dto.pagination.PaginationResponseDto;
 import com.example.librarymanagement.domain.dto.pagination.PagingMeta;
-import com.example.librarymanagement.domain.dto.request.reader.CreateReaderCardRequestDto;
+import com.example.librarymanagement.domain.dto.request.reader.CreateReaderCardsRequestDto;
 import com.example.librarymanagement.domain.dto.request.reader.ReaderRequestDto;
 import com.example.librarymanagement.domain.dto.response.library.LibraryInfoResponseDto;
 import com.example.librarymanagement.domain.dto.response.reader.ReaderDetailResponseDto;
@@ -280,8 +280,7 @@ public class ReaderServiceImpl implements ReaderService {
     }
 
     @Override
-    public byte[] generateReaderCards(CreateReaderCardRequestDto requestDto) {
-
+    public byte[] generateReaderCards(CreateReaderCardsRequestDto requestDto) {
         List<Reader> readers = readerRepository.findAllByIdIn(requestDto.getReaderIds());
         if (readers.isEmpty()) {
             throw new BadRequestException(ErrorMessage.Reader.ERR_NOT_FOUND_ID, requestDto.getReaderIds());
@@ -292,7 +291,6 @@ public class ReaderServiceImpl implements ReaderService {
 
     @Override
     public ReaderDetailResponseDto getReaderDetailsByCardNumber(String cardNumber) {
-
         Reader reader = readerRepository.findByCardNumber(cardNumber)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.Reader.ERR_NOT_FOUND_CARD_NUMBER, cardNumber));
 

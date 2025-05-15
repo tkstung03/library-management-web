@@ -40,7 +40,7 @@ public class PdfServiceImpl implements PdfService {
     private static Font subHeaderFont;
 
     static {
-        String FONT_PATH = "src/main/resources/fonts/NotoSans-Regular.ttf";
+        String FONT_PATH = "src/main/resources/fonts/HankenGrotesk-Regular.ttf";
 
         try {
             BaseFont baseFont =BaseFont.createFont(FONT_PATH, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
@@ -592,6 +592,10 @@ public class PdfServiceImpl implements PdfService {
 
     @Override
     public byte[] createLabelType2Pdf(List<Book> books) {
+        if (books == null || books.isEmpty()) {
+            throw new IllegalArgumentException("Danh sách sách trống. Không thể tạo PDF.");
+        }
+
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4, 10, 10, 10, 10);
 
