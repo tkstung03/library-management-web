@@ -11,17 +11,15 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Log4j2
 @RequiredArgsConstructor
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.example.librarymanagement")
 @EnableScheduling
 public class LibrarymanagementApplication {
 
     public static void main(String[] args) {
         ApplicationContext context = SpringApplication.run(LibrarymanagementApplication.class, args);
 
-        // Lấy Environment từ ApplicationContext
         Environment env = context.getEnvironment();
 
-        // Lấy giá trị từ thuộc tính "spring.application.name"
         String appName = env.getProperty("spring.application.name");
 
         if (appName != null) {

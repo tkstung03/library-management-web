@@ -79,12 +79,12 @@ public class PdfServiceImpl implements PdfService {
         Document document = new Document(PageSize.A4, 10, 10, 10, 10);
 
         try {
-            PdfWriter pdfWriter = PdfWriter.getInstance(document, outputStream);
+            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
             document.open();
 
             int cardsPerPage = 8;
             int totalReaders = readers.size();
-            int totalPages = (int) Math.ceil((double)  totalReaders / cardsPerPage);
+            int totalPages = (int) Math.ceil((double) totalReaders / cardsPerPage);
 
             for (int pageIndex = 0; pageIndex < totalPages; pageIndex++) {
                 PdfPTable mainTable = new PdfPTable(2);
@@ -92,9 +92,9 @@ public class PdfServiceImpl implements PdfService {
                 mainTable.setSpacingBefore(10f);
                 mainTable.setSpacingAfter(10f);
 
-                int lop = Math.min((pageIndex + 1) * cardsPerPage, totalPages );
+                int lop = Math.min((pageIndex + 1) * cardsPerPage, totalReaders);
                 for (int i = pageIndex * cardsPerPage; i < lop; i++) {
-                    Reader reader =readers.get(i);
+                    Reader reader = readers.get(i);
                     PdfPTable cardContainer = new PdfPTable(1);
                     cardContainer.setWidthPercentage(100);
 
@@ -108,7 +108,7 @@ public class PdfServiceImpl implements PdfService {
                     cardContentTable.setWidthPercentage(100);
                     cardContentTable.setWidths(new int[]{1, 2});
 
-                    PdfPTable avatarTable = createAvatarTable(pdfWriter, reader);
+                    PdfPTable avatarTable = createAvatarTable(writer, reader);
                     PdfPCell avatarCell = new PdfPCell(avatarTable);
                     avatarCell.setPadding(5);
                     avatarCell.setBorder(Rectangle.NO_BORDER);
@@ -141,6 +141,7 @@ public class PdfServiceImpl implements PdfService {
         } catch (DocumentException | IOException e) {
             log.error("Error creating PDF: {}", e.getMessage(), e);
         }
+
         return outputStream.toByteArray();
     }
 

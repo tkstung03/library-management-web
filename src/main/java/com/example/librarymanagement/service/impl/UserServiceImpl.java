@@ -153,7 +153,7 @@ public class UserServiceImpl implements UserService {
         // Cập nhật thông tin user
         user.setUsername(requestDto.getUsername());
         user.setExpiryDate(requestDto.getExpiryDate());
-        user.setStatus(requestDto.getAccountStatus());
+        user.setStatus(requestDto.getStatus());
         user.setFullName(requestDto.getFullName());
         user.setPosition(requestDto.getPosition());
         user.setEmail(requestDto.getEmail());

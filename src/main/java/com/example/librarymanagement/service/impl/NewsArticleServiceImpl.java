@@ -11,10 +11,12 @@ import com.example.librarymanagement.domain.dto.pagination.PagingMeta;
 import com.example.librarymanagement.domain.dto.request.newsarticle.NewsArticleRequestDto;
 import com.example.librarymanagement.domain.dto.response.newsarticle.NewsArticleResponseDto;
 import com.example.librarymanagement.domain.entity.NewsArticle;
+import com.example.librarymanagement.domain.entity.User;
 import com.example.librarymanagement.domain.mapper.NewsArticleMapper;
 import com.example.librarymanagement.domain.specification.NewsArticleSpecification;
 import com.example.librarymanagement.exception.NotFoundException;
 import com.example.librarymanagement.repository.NewsArticleRepository;
+import com.example.librarymanagement.repository.UserRepository;
 import com.example.librarymanagement.service.LogService;
 import com.example.librarymanagement.service.NewsArticleService;
 import com.example.librarymanagement.util.MaskingUtils;
@@ -46,12 +48,19 @@ public class NewsArticleServiceImpl implements NewsArticleService {
 
     private final LogService logService;
 
+    private final UserRepository userRepository;
+
     private final UploadFileUtil uploadFileUtil;
 
     @Override
     public CommonResponseDto save(NewsArticleRequestDto requestDto, MultipartFile imageFile, String userId) {
         NewsArticle newsArticle = newsArticleMapper.toNewsArticle(requestDto);
         newsArticle.setActiveFlag(true);
+
+        // ✅ Gán user vào article
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID, userId));
+        newsArticle.setUser(user);
 
         //Kiem tra dinh dang file anh
         uploadFileUtil.checkImageIsValid(imageFile);
@@ -64,6 +73,7 @@ public class NewsArticleServiceImpl implements NewsArticleService {
 
         newsArticle.setCreatedDate(LocalDate.now());
         newsArticle.setTitleSlug(MaskingUtils.toSlug(newsArticle.getTitle() +  newsArticleRepository.count()));
+        newsArticle.setViewCount(0L);
         newsArticleRepository.save(newsArticle);
 
         logService.createLog(TAG, EventConstants.ADD, "Tạo bài viết mới: " + newsArticle.getTitle(), userId);

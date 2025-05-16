@@ -1,13 +1,19 @@
 package com.example.librarymanagement.service.impl;
 
 import com.example.librarymanagement.constant.ErrorMessage;
+import com.example.librarymanagement.constant.SortByDataConstant;
 import com.example.librarymanagement.constant.SuccessMessage;
 import com.example.librarymanagement.domain.dto.common.CommonResponseDto;
+import com.example.librarymanagement.domain.dto.pagination.PaginationFullRequestDto;
+import com.example.librarymanagement.domain.dto.pagination.PaginationResponseDto;
+import com.example.librarymanagement.domain.dto.pagination.PagingMeta;
 import com.example.librarymanagement.domain.dto.response.cart.CartDetailResponseDto;
+import com.example.librarymanagement.domain.dto.response.receipt.BorrowRequestSummaryResponseDto;
 import com.example.librarymanagement.domain.entity.Book;
 import com.example.librarymanagement.domain.entity.Cart;
 import com.example.librarymanagement.domain.entity.CartDetail;
 import com.example.librarymanagement.domain.entity.Reader;
+import com.example.librarymanagement.domain.specification.CartSpecification;
 import com.example.librarymanagement.exception.BadRequestException;
 import com.example.librarymanagement.exception.NotFoundException;
 import com.example.librarymanagement.repository.BookRepository;
@@ -16,10 +22,15 @@ import com.example.librarymanagement.repository.CartRepository;
 import com.example.librarymanagement.repository.ReaderRepository;
 import com.example.librarymanagement.service.CartService;
 import com.example.librarymanagement.util.MessageUtil;
+import com.example.librarymanagement.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -55,7 +66,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CommonResponseDto addToCart(String cardNumber, String bookCode) {
+    public CommonResponseDto addToCart(String cardNumber, Long bookId) {
         Cart cart = getEntity(cardNumber);
 
         //Kiem tra gio hang day chua
@@ -63,8 +74,8 @@ public class CartServiceImpl implements CartService {
             throw new BadRequestException(ErrorMessage.Cart.ERR_MAX_BOOKS_IN_CART);
         }
 
-        Book book = bookRepository.findByBookCode(bookCode)
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.Book.ERR_NOT_FOUND_CODE, bookCode));
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Book.ERR_NOT_FOUND_ID, bookId));
 
         CartDetail cartDetail = new CartDetail();
         cartDetail.setBook(book);
@@ -98,5 +109,41 @@ public class CartServiceImpl implements CartService {
 
         String message = messageUtil.getMessage(SuccessMessage.DELETE);
         return new CommonResponseDto(message);
+    }
+
+    @Override
+    public PaginationResponseDto<BorrowRequestSummaryResponseDto> getPendingBorrowRequests(PaginationFullRequestDto requestDto) {
+        Pageable pageable = PaginationUtil.buildPageable(requestDto, SortByDataConstant.BORROW_REQUEST);
+
+        Page<Cart> page = cartRepository.findAll(
+                CartSpecification.filterCarts(requestDto.getKeyword(), requestDto.getSearchBy()),
+                pageable);
+
+        LocalDateTime now = LocalDateTime.now();
+        List<BorrowRequestSummaryResponseDto> items = new ArrayList<>();
+        List<Cart> carts = page.getContent();
+        for (Cart cart : carts) {
+            List<CartDetail> cartDetails = cart.getCartDetails();
+            List<CartDetail> filteredCartDetails = new ArrayList<>();
+            for (CartDetail cartDetail : cartDetails) {
+//                if (cartDetail.getBorrowTo().isAfter(now)) {
+                    filteredCartDetails.add(cartDetail);
+
+            }
+            if (!filteredCartDetails.isEmpty()) {
+                BorrowRequestSummaryResponseDto dto = new BorrowRequestSummaryResponseDto();
+                dto.setCartDetails(filteredCartDetails);
+                dto.setReader(cart.getReader());
+                items.add(dto);
+            }
+        }
+
+        PagingMeta pagingMeta = PaginationUtil.buildPagingMeta(requestDto, SortByDataConstant.BORROW_REQUEST, page);
+        PaginationResponseDto<BorrowRequestSummaryResponseDto> responseDto = new PaginationResponseDto<>();
+
+        responseDto.setItems(items);
+        responseDto.setMeta(pagingMeta);
+
+        return responseDto;
     }
 }

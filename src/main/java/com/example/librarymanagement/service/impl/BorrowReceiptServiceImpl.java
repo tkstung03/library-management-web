@@ -85,7 +85,7 @@ public class BorrowReceiptServiceImpl implements BorrowReceiptService {
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.Book.ERR_NOT_FOUND_CODE));
 
         //Kiem tra sach duoc muon hay chua
-        if (!book.getBookCondition().equals(BookCondition.AVAIABLE)) {
+        if (!book.getBookCondition().equals(BookCondition.AVAILABLE)) {
             throw new ConflictException(ErrorMessage.Book.ERR_BOOK_ALREADY_BORROWED, bookCode);
         }
 
@@ -183,7 +183,7 @@ public class BorrowReceiptServiceImpl implements BorrowReceiptService {
             //Cập nhật trạng thái của sách bị xóa khỏi phiếu mượn
             for (BookBorrow bookBorrow : booksToRemove) {
                 Book book = bookBorrow.getBook();
-                book.setBookCondition(BookCondition.AVAIABLE);
+                book.setBookCondition(BookCondition.AVAILABLE);
                 bookRepository.save(book);
             }
 
@@ -245,7 +245,7 @@ public class BorrowReceiptServiceImpl implements BorrowReceiptService {
 
         List<Book> booksToUpdate = borrowReceipt.getBookBorrows().stream()
                 .map(BookBorrow::getBook)
-                .peek(book -> book.setBookCondition(BookCondition.AVAIABLE))
+                .peek(book -> book.setBookCondition(BookCondition.AVAILABLE))
                 .toList();
 
         bookRepository.saveAll(booksToUpdate);

@@ -27,7 +27,7 @@ public class BookForReaderResponseDto {
         this.title = bookDefinition.getTitle();
         this.imageUrl = bookDefinition.getImageUrl();
         this.quantity = bookDefinition.getBooks().stream()
-                .filter(book -> book.getBookCondition() == BookCondition.AVAIABLE)
+                .filter(book -> book.getBookCondition() == BookCondition.AVAILABLE)
                 .count();
         List<BookAuthor> au = bookDefinition.getBookAuthors();
         if (au != null){

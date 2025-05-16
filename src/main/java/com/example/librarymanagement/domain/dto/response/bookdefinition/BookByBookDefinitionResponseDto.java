@@ -48,7 +48,7 @@ public class BookByBookDefinitionResponseDto {
             }
             this.totalBooks++;
             switch (book.getBookCondition()){
-                case AVAIABLE:
+                case AVAILABLE:
                     this.availableBooks++;
                     break;
                 case ON_LOAN:

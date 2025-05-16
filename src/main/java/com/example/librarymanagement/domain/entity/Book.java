@@ -31,7 +31,7 @@ public class Book {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "book_condition")
-    private BookCondition bookCondition = BookCondition.AVAIABLE; //Tình trạng mượn/trả sách
+    private BookCondition bookCondition = BookCondition.AVAILABLE; //Tình trạng mượn/trả sách
 
     @Enumerated(EnumType.STRING)
     @Column(name = "book_status")

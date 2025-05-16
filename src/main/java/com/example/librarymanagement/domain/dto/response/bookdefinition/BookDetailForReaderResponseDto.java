@@ -55,7 +55,7 @@ public class BookDetailForReaderResponseDto {
 
         //bookCount
         this.bookCount = bookDefinition.getBooks().stream()
-                .filter(book -> book.getBookCondition() == BookCondition.AVAIABLE && book.getExportReceipt() == null)
+                .filter(book -> book.getBookCondition() == BookCondition.AVAILABLE && book.getExportReceipt() == null)
                 .count();
 
         // set category

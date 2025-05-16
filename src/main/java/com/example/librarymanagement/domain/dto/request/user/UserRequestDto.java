@@ -30,7 +30,7 @@ public class UserRequestDto {
 
     private LocalDate expiryDate;
 
-    private AccountStatus accountStatus;
+    private AccountStatus status;
 
     @NotBlank(message = ErrorMessage.INVALID_NOT_BLANK_FIELD)
     @Pattern(regexp = CommonConstant.REGEXP_FULL_NAME, message = ErrorMessage.INVALID_FORMAT_NAME)

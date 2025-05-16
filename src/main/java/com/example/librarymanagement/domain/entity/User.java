@@ -60,6 +60,7 @@ public class User {
     @Column(name = "note")
     private String note;
 
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Log> logs = new ArrayList<>();

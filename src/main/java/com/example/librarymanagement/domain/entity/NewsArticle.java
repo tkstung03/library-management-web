@@ -47,7 +47,8 @@ public class NewsArticle {
     private Long viewCount = 0L;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_NEWS_ARTICLES_USER_ID"), referencedColumnName = "user_group_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "FK_NEWS_ARTICLES_USER_ID"))
     @JsonIgnore
     private User user;
+
 }

@@ -18,6 +18,6 @@ public class BookSetResponseDto {
         this.id = bookSet.getId();
         this.name = bookSet.getName();
         this.activeFlag = bookSet.getActiveFlag();
-        this.bookCount = bookSet.getBookDefinitions().size();
+        this.bookCount = bookSet.getBookDefinitions() == null ? 0 : bookSet.getBookDefinitions().size();
     }
 }

@@ -25,7 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestApiV1
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@Tag(name = "Library Information")
+@Tag(name = "System settings")
 public class LibraryInfoController {
     SystemSettingService systemSettingService;
 

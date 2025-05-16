@@ -98,7 +98,7 @@ public class BookBorrowServiceImpl implements BookBorrowService {
             bookBorrow.setBookBorrowStatus(BookBorrowStatus.RETURNED);
 
             Book book = bookBorrow.getBook();
-            book.setBookCondition(BookCondition.AVAIABLE);
+            book.setBookCondition(BookCondition.AVAILABLE);
             if (requestDto.getBookStatus() != null) {
                 book.setBookStatus(requestDto.getBookStatus());
             }

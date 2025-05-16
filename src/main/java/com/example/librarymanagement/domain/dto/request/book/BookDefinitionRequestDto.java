@@ -4,10 +4,12 @@ import com.example.librarymanagement.constant.ErrorMessage;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.URL;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,70 +20,69 @@ import java.util.Set;
 @AllArgsConstructor
 public class BookDefinitionRequestDto {
     @NotBlank(message = ErrorMessage.INVALID_NOT_BLANK_FIELD)
-    @Max(value = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
-    private String title;
+    @Size(max = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
+    private String title;  // Nhan đề
 
     @NotBlank(message = ErrorMessage.INVALID_NOT_BLANK_FIELD)
-    @Max(value = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
-    private String bookNumber;
+    @Size(max = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
+    private String bookNumber; // Kí hiệu tên sách
 
-    @NotNull(message = ErrorMessage.INVALID_NOT_NULL_FIELD)
-    private Long categoryId;
+    @NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED)
+    private Long categoryId; // Danh mục
 
-    private Long publisherId;
+    private Long publisherId; // Nhà xuất bản
 
-    private Long bookSetId;
+    private Long bookSetId; // Bộ sách
 
-    private Long classificationSymbolId;
+    private Long classificationSymbolId; // Kí hiệu phân loại
 
-    private Integer pageCount;
+    private Integer pageCount; // Số trang
 
-    private Double price;
+    private Double price; // Giá bán
 
-    private Double referencePrice;
+    private Double referencePrice; // Giá tham khảo
 
     @NotNull(message = ErrorMessage.INVALID_ARRAY_IS_REQUIRED)
-    private Set<@NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED) Long>
-        authorIds = new HashSet<>(); //id tac gia
+    private Set<@NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED) Long> authorIds = new HashSet<>();// Tác giả
 
-    @Max(value = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
-    private String publicationPlace;
+    @Size(max = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
+    private String publicationPlace; // Nơi xuất bản
 
-    private Integer publishingYear;
+    private Integer publishingYear; // Năm xuất bản
 
-    @Max(value = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
-    private String bookSize;
+    @Size(max = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
+    private String edition; // Lần xuất bản
 
-    @Max(value = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
-    private String parallelTitle; //nhan de song song
+    @Size(max = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
+    private String bookSize; // Khổ sách (cm)
 
-    @Max(value = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
-    private String subtitle;
+    @Size(max = 255, message = ErrorMessage.INVALID_TEXT_LENGTH)
+    private String parallelTitle; // Nhan đề song song
 
-    @Max(value = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
-    private String edition;
+    @Size(max = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
+    private String subtitle; // Phụ đề
 
-    @Max(value = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
-    private String additionalMaterial; //tai lieu di kem
+    @Size(max = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
+    private String additionalMaterial; // Tài liệu đi kèm
 
-    @Max(value = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
-    private String summary;
+    @Size(max = 1000, message = ErrorMessage.INVALID_TEXT_LENGTH)
+    private String summary; // Tóm tắt
 
-    @Max(value = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
-    private String isbn;
+    @Size(max = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
+    private String isbn; // Mã ISBN
 
-    @Max(value = 500, message = ErrorMessage.INVALID_TEXT_LENGTH)
-    private String keywords;
+    @Size(max = 500, message = ErrorMessage.INVALID_TEXT_LENGTH)
+    private String keywords; // Từ khóa tìm kiếm
 
-    @Max(value = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
-    private String language;
+    @Size(max = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
+    private String language; // Ngôn ngữ
 
-    @Max(value = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
-    private String additionalInfo;
+    @Size(max = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
+    private String additionalInfo; // Thông tin khác
 
-    @Max(value = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
-    private String series;
+    @Size(max = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
+    private String series; // Tùng thư
 
-    @Max(value = 100, message = ErrorMessage.INVALID_TEXT_LENGTH)
-    private String imageUrl;
+    @URL(message = ErrorMessage.INVALID_URL_FORMAT)
+    private String imageUrl; // Ảnh bìa
 }

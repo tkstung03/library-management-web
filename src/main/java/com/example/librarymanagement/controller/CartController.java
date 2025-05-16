@@ -4,6 +4,7 @@ import com.example.librarymanagement.annotation.CurrentUser;
 import com.example.librarymanagement.annotation.RestApiV1;
 import com.example.librarymanagement.base.VsResponseUtil;
 import com.example.librarymanagement.constant.UrlConstant;
+import com.example.librarymanagement.domain.dto.pagination.PaginationFullRequestDto;
 import com.example.librarymanagement.security.CustomUserDetails;
 import com.example.librarymanagement.service.CartService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,11 +42,12 @@ public class CartController {
     @PreAuthorize("hasRole('ROLE_READER')")
     @PostMapping(UrlConstant.Cart.ADD)
     public ResponseEntity<?> addToCart(
-            @RequestParam String bookCode,
+            @RequestParam Long bookId,
             @CurrentUser CustomUserDetails userDetails
     ) {
-        return VsResponseUtil.success(HttpStatus.CREATED, cartService.addToCart(userDetails.getCardNumber(), bookCode));
+        return VsResponseUtil.success(HttpStatus.CREATED, cartService.addToCart(userDetails.getCardNumber(), bookId));
     }
+
 
     @Operation(summary = "API Remove Book from Cart")
     @PreAuthorize("hasRole('ROLE_READER')")
@@ -62,4 +65,12 @@ public class CartController {
     public ResponseEntity<?> clearCart(@CurrentUser CustomUserDetails userDetails) {
         return VsResponseUtil.success(cartService.clearCart(userDetails.getCardNumber()));
     }
+
+    @Operation(summary = "API to retrieve details of pending borrow requests")
+    @PreAuthorize("hasRole('ROLE_MANAGE_BORROW_RECEIPT')")
+    @GetMapping(UrlConstant.Cart.PENDING_BORROW_REQUESTS)
+    public ResponseEntity<?> getPendingBorrowRequests(@ParameterObject PaginationFullRequestDto requestDto) {
+        return VsResponseUtil.success(cartService.getPendingBorrowRequests(requestDto));
+    }
+
 }
