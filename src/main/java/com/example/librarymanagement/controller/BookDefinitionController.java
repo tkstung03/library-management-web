@@ -120,11 +120,15 @@ public class BookDefinitionController {
             @RequestParam(value = "categoryGroupId", required = false) Long categoryGroupId,
             @RequestParam(value = "categoryId", required = false) Long categoryId,
             @RequestParam(value = "authorId", required = false) Long authorId,
-            @Parameter(description = "Filter type (only accepts 'most_borrowed' or 'new_releases')", example = "most_borrowed")
             @RequestParam(value = "filterType", required = false) String filterType
     ) {
+        System.out.println("📢📢📢 [GET_BOOKS_FOR_USER] Called!");
+        System.out.println("sortBy: " + requestDto.getSortBy());
+        System.out.println("isAscending: " + requestDto.getIsAscending());
+
         return VsResponseUtil.success(bookDefinitionService.getBooksForUser(requestDto, categoryGroupId, categoryId, authorId, filterType));
     }
+
 
     @Operation(summary = "API Get Book Detail For User")
     @GetMapping(UrlConstant.BookDefinition.GET_BOOK_DETAIL_FOR_USER)

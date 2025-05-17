@@ -295,6 +295,14 @@ public class BorrowReceiptServiceImpl implements BorrowReceiptService {
 
         BorrowReceiptDetailResponseDto responseDto = new BorrowReceiptDetailResponseDto();
         responseDto.setReaderId(cart.getReader().getId());
+
+        LocalDateTime now = LocalDateTime.now();
+        for (CartDetail cartDetail : cart.getCartDetails()) {
+//            if (cartDetail.getBorrowTo().isAfter(now)) { todo fix bugs
+            responseDto.getBooks().add(cartDetail.getBook().getBookCode());
+//            }
+        }
+
         return responseDto;
     }
 

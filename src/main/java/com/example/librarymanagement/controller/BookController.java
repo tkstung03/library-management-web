@@ -44,7 +44,7 @@ public class BookController {
     }
 
     @Operation(summary = "API Get All Books")
-    @PreAuthorize("hasRole('ROLE_MANAGE_BOOK', 'ROLE_MANAGE_EXPORT_RECEIPT')")
+    @PreAuthorize("hasAnyRole('ROLE_MANAGE_BOOK', 'ROLE_MANAGE_EXPORT_RECEIPT')")
     @GetMapping(UrlConstant.Book.GET_ALL)
     public ResponseEntity<?> getAllBooks(
             @ParameterObject PaginationFullRequestDto requestDto,

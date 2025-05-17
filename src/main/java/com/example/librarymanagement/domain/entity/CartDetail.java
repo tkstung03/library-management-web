@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -17,6 +19,14 @@ public class CartDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cart_detail_id")
     private Long id;
+
+    // Đăng ký mượn từ
+    @Column(name = "borrow_from", nullable = false)
+    private LocalDateTime borrowFrom;
+
+    // Đến
+    @Column(name = "borrow_to", nullable = false)
+    private LocalDateTime borrowTo;
 
     @ManyToOne
     @JoinColumn(name = "book_id", foreignKey = @ForeignKey(name = "FK_CART_DETAIL_BOOK_ID"), referencedColumnName = "book_id", nullable = false)

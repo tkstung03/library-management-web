@@ -1,5 +1,6 @@
 package com.example.librarymanagement.service.impl;
 
+import com.example.librarymanagement.constant.BookCondition;
 import com.example.librarymanagement.constant.ErrorMessage;
 import com.example.librarymanagement.constant.SortByDataConstant;
 import com.example.librarymanagement.constant.SuccessMessage;
@@ -9,17 +10,11 @@ import com.example.librarymanagement.domain.dto.pagination.PaginationResponseDto
 import com.example.librarymanagement.domain.dto.pagination.PagingMeta;
 import com.example.librarymanagement.domain.dto.response.cart.CartDetailResponseDto;
 import com.example.librarymanagement.domain.dto.response.receipt.BorrowRequestSummaryResponseDto;
-import com.example.librarymanagement.domain.entity.Book;
-import com.example.librarymanagement.domain.entity.Cart;
-import com.example.librarymanagement.domain.entity.CartDetail;
-import com.example.librarymanagement.domain.entity.Reader;
+import com.example.librarymanagement.domain.entity.*;
 import com.example.librarymanagement.domain.specification.CartSpecification;
 import com.example.librarymanagement.exception.BadRequestException;
 import com.example.librarymanagement.exception.NotFoundException;
-import com.example.librarymanagement.repository.BookRepository;
-import com.example.librarymanagement.repository.CartDetailRepository;
-import com.example.librarymanagement.repository.CartRepository;
-import com.example.librarymanagement.repository.ReaderRepository;
+import com.example.librarymanagement.repository.*;
 import com.example.librarymanagement.service.CartService;
 import com.example.librarymanagement.util.MessageUtil;
 import com.example.librarymanagement.util.PaginationUtil;
@@ -45,11 +40,14 @@ public class CartServiceImpl implements CartService {
     private final ReaderRepository readerRepository;
 
     private final BookRepository bookRepository;
-
+    private  final BookDefinitionRepository bookDefinitionRepository;
     private final MessageUtil messageUtil;
 
-    @Value("${cartDetail.maxBooks}")
+    @Value("${cartDetail.maxBooks:5}")
     private int maxBooksInCart;
+
+    @Value("${cartDetail.borrowTimeHours:2}")
+    private int borrowTimeHours;
 
     private Cart getEntity(String cardNumber) {
         return cartRepository.findByReaderCardNumber(cardNumber).orElseGet(() -> {
@@ -65,8 +63,8 @@ public class CartServiceImpl implements CartService {
         return cartDetailRepository.getAllByCardNumber(cardNumber);
     }
 
-    @Override
-    public CommonResponseDto addToCart(String cardNumber, Long bookId) {
+ //   @Override
+    public CommonResponseDto addToCart2(String cardNumber, Long bookId) {
         Cart cart = getEntity(cardNumber);
 
         //Kiem tra gio hang day chua
@@ -80,6 +78,62 @@ public class CartServiceImpl implements CartService {
         CartDetail cartDetail = new CartDetail();
         cartDetail.setBook(book);
         cartDetail.setCart(cart);
+
+        cartDetailRepository.save(cartDetail);
+
+        String message = messageUtil.getMessage(SuccessMessage.CREATE);
+        return new CommonResponseDto(message);
+    }
+
+    public CommonResponseDto addToCart(String cardNumber, Long bookId) {
+        Cart cart = getEntity(cardNumber);
+        LocalDateTime now = LocalDateTime.now();
+
+        long count = cart.getCartDetails().stream()
+                .filter(cartDetail -> cartDetail.getBorrowTo().isAfter(now))
+                .count();
+
+        if (count >= maxBooksInCart) {
+            throw new BadRequestException(ErrorMessage.Cart.ERR_MAX_BOOKS_IN_CART);
+        }
+
+        BookDefinition bookDefinition = bookDefinitionRepository.findById(bookId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.BookDefinition.ERR_NOT_FOUND_ID, bookId));
+        Book book = null;
+
+        for (Book bookCandidate : bookDefinition.getBooks()) {
+            // Kiểm tra nếu sách có trong phiếu xuất
+            if (bookCandidate.getExportReceipt() != null) {
+                continue;
+            }
+
+            // Kiểm tra sách có rảnh không
+            if (!bookCandidate.getBookCondition().equals(BookCondition.AVAILABLE)) {
+                continue;
+            }
+
+            // Kiểm tra xem sách đã được giữ chỗ chưa
+            List<CartDetail> cartDetails = bookCandidate.getCartDetails();
+            boolean isBookReserved = cartDetails.stream().anyMatch(cartDetail -> cartDetail.getBorrowTo().isAfter(now));
+            if (isBookReserved) {
+                continue;
+            }
+
+            // Gán sách khả dụng cho biến `book` và thoát vòng lặp
+            book = bookCandidate;
+            break;
+        }
+
+        if (book == null) {
+            throw new NotFoundException(ErrorMessage.BookDefinition.ERR_NOT_FOUND_ID, bookId);
+        }
+
+        CartDetail cartDetail = new CartDetail();
+        cartDetail.setBook(book);
+        cartDetail.setCart(cart);
+
+        cartDetail.setBorrowFrom(now);
+        cartDetail.setBorrowTo(now.plusHours(borrowTimeHours));
 
         cartDetailRepository.save(cartDetail);
 
