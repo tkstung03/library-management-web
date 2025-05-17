@@ -38,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -141,6 +142,7 @@ public class BookDefinitionServiceImpl implements BookDefinitionService {
         }
 
         BookDefinition bookDefinition = bookDefinitionMapper.toBookDefinition(requestDto);
+        bookDefinition.setBookAuthors(new ArrayList<>());
 
         //Lưu danh mục
         Category category = categoryRepository.findByIdAndActiveFlagIsTrue(requestDto.getCategoryId())
