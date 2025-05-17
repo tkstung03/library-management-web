@@ -108,7 +108,7 @@ public class BookController {
     }
 
     @Operation(summary = "API Get Book List PDF")
-    @PreAuthorize("hasRole('ROLE_MANAE_BOOK')")
+    @PreAuthorize("hasRole('ROLE_MANAGE_BOOK')")
     @GetMapping(UrlConstant.Book.GET_BOOK_LIST_PDF)
     public ResponseEntity<byte[]> getBookListPdf() {
         byte[] pdfContent = bookService.generateBookListPdf();
