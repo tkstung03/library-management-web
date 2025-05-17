@@ -144,6 +144,7 @@ public class ErrorMessage {
         public static final String ERR_HAS_LINKED_BOOKS = "exception.book.definition.has.linked";
         public static final String ERR_DUPLICATE_CODE = "exception.book.definition.duplicate.code";
         public static final String ERR_INVALID_FIELD = "exception.book.definition.invalid.field";
+        public static final String ERR_OUT_OF_STOCK = "exception.book.definition.out.of.stock";
     }
 
     public static class ClassificationSymbol {

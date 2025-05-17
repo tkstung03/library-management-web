@@ -298,9 +298,9 @@ public class BorrowReceiptServiceImpl implements BorrowReceiptService {
 
         LocalDateTime now = LocalDateTime.now();
         for (CartDetail cartDetail : cart.getCartDetails()) {
-//            if (cartDetail.getBorrowTo().isAfter(now)) { todo fix bugs
-            responseDto.getBooks().add(cartDetail.getBook().getBookCode());
-//            }
+            if (cartDetail.getBorrowTo().isAfter(now)) {
+                responseDto.getBooks().add(cartDetail.getBook().getBookCode());
+            }
         }
 
         return responseDto;

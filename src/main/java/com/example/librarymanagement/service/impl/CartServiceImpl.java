@@ -125,7 +125,7 @@ public class CartServiceImpl implements CartService {
         }
 
         if (book == null) {
-            throw new NotFoundException(ErrorMessage.BookDefinition.ERR_NOT_FOUND_ID, bookId);
+            throw new NotFoundException(ErrorMessage.BookDefinition.ERR_OUT_OF_STOCK);
         }
 
         CartDetail cartDetail = new CartDetail();

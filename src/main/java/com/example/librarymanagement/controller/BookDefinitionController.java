@@ -122,10 +122,6 @@ public class BookDefinitionController {
             @RequestParam(value = "authorId", required = false) Long authorId,
             @RequestParam(value = "filterType", required = false) String filterType
     ) {
-        System.out.println("📢📢📢 [GET_BOOKS_FOR_USER] Called!");
-        System.out.println("sortBy: " + requestDto.getSortBy());
-        System.out.println("isAscending: " + requestDto.getIsAscending());
-
         return VsResponseUtil.success(bookDefinitionService.getBooksForUser(requestDto, categoryGroupId, categoryId, authorId, filterType));
     }
 
