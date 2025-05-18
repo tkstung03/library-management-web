@@ -23,21 +23,21 @@ public class SpecificationsUtil {
                 return Short.parseShort(value);
             } else if (fieldType.equals(Boolean.class) || fieldType.equals(boolean.class)) {
                 return Boolean.parseBoolean(value);
+            } else {
+                return value;
             }
         } catch (NumberFormatException e) {
             throw new BadRequestException(ErrorMessage.INVALID_NUMBER_FORMAT);
         }
-
-        return null;
     }
 
-    public static Object castToRequiredType(Class<?> fieldType, List<String> value) {
-        List<Object> list = new ArrayList<>();
-
-        for (String s : value) {
-            list.add(castToRequiredType(fieldType, s));
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> castListToRequiredType2(Class<T> fieldType, List<String> values) {
+        List<T> result = new ArrayList<>();
+        for (String value : values) {
+            result.add((T) castToRequiredType(fieldType, value));
         }
-
-        return list;
+        return result;
     }
+
 }

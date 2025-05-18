@@ -58,13 +58,15 @@ public class BorrowReceiptServiceImpl implements BorrowReceiptService {
 
     private final CartRepository cartRepository;
 
+    private final CartDetailRepository cartDetailRepository;
+
     private final UserRepository userRepository;
 
     private final PdfService pdfService;
 
     private final ExcelExportService excelExportService;
 
-    private SystemSettingService systemSettingService;
+    private final SystemSettingService systemSettingService;
 
     private BorrowReceipt getEntity(Long id) {
         return borrowReceiptRepository.findById(id)
@@ -89,6 +91,15 @@ public class BorrowReceiptServiceImpl implements BorrowReceiptService {
             throw new ConflictException(ErrorMessage.Book.ERR_BOOK_ALREADY_BORROWED, bookCode);
         }
 
+        //Kiểm tra sách xem có ai khác đã đăng ký mượn từ trước hay chưa
+        LocalDateTime now = LocalDateTime.now();
+        for (CartDetail cartDetail : book.getCartDetails()) {
+            if (cartDetail.getBorrowTo().isAfter(now)
+                    && !Objects.equals(cartDetail.getCart().getReader().getId(), borrowReceipt.getReader().getId())) {
+                throw new ConflictException(ErrorMessage.Book.ERR_BOOK_RESERVED_BY_ANOTHER_READER, bookCode);
+            }
+        }
+
         //Cap nhat trang thai sach
         book.setBookCondition(BookCondition.ON_LOAN);
         bookRepository.save(book);
@@ -103,7 +114,7 @@ public class BorrowReceiptServiceImpl implements BorrowReceiptService {
     public String generateReceiptNumber() {
         long currentCount = borrowReceiptRepository.count();
         long nextNumber = currentCount + 1;
-        return String.format("PM%05d", nextNumber );
+        return String.format("PM%03d", nextNumber );
     }
 
     @Override
@@ -132,6 +143,7 @@ public class BorrowReceiptServiceImpl implements BorrowReceiptService {
             Set<Book> booksToBorrow = borrowReceipt.getBookBorrows().stream()
                     .map(BookBorrow::getBook)
                     .collect(Collectors.toSet());
+            cartDetailRepository.deleteByCartIdAndBooks(cart.getId(), booksToBorrow, now);
         }
 
         borrowReceiptRepository.save(borrowReceipt);

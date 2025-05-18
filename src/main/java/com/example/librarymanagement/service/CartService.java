@@ -11,7 +11,7 @@ import java.util.Set;
 
 public interface CartService {
 
-    List<CartDetailResponseDto> getCartDetails(String cardNumber);
+    List<CartDetailResponseDto> getCartDetails(String cardNumber, String title, String type);
 
     CommonResponseDto addToCart(String cardNumber, Long id);
 

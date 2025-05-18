@@ -9,4 +9,4 @@
 8,Ngày Thành lập Quân đội Nhân dân Việt Nam,2025-12-22,2025-12-22,false
 9,Ngày Lễ Giáng Sinh,2025-12-25,2025-12-25,false
 10,Ngày Quốc tế Phụ nữ,2025-03-08,2025-03-08,false
-11,Ngày của Mẹ,2025-05-12,2025-05-12,true
+11,Ngày của Mẹ,2025-05-18,2025-05-18,true

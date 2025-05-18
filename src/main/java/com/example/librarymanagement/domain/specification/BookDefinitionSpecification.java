@@ -6,6 +6,7 @@ import com.example.librarymanagement.domain.dto.filter.BookDefinitionFilter;
 import com.example.librarymanagement.domain.dto.filter.QueryFilter;
 import com.example.librarymanagement.domain.entity.*;
 import com.example.librarymanagement.exception.BadRequestException;
+import com.example.librarymanagement.util.SpecificationsUtil;
 import jakarta.persistence.criteria.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
@@ -18,7 +19,7 @@ import static com.example.librarymanagement.util.SpecificationsUtil.castToRequir
 public class BookDefinitionSpecification {
 
     private static final Map<String, List<QueryOperator>> ALLOWED_FIELDS = Map.of(
-            "title", List.of(QueryOperator.LIKE, QueryOperator.EQUALS),
+            "title", List.of(QueryOperator.LIKE, QueryOperator.EQUALS, QueryOperator.IN),
             "author", List.of(QueryOperator.LIKE, QueryOperator.EQUALS, QueryOperator.IN),
             "publisher", List.of(QueryOperator.LIKE, QueryOperator.EQUALS, QueryOperator.IN),
             "publishingYear", List.of(QueryOperator.LIKE, QueryOperator.EQUALS, QueryOperator.LESS_THAN),
@@ -169,7 +170,7 @@ public class BookDefinitionSpecification {
 
                 case LIKE -> criteriaBuilder.like(path.as(String.class), "%" + input.getValue() + "%");
 
-                case IN -> path.in(castToRequiredType(path.getJavaType(), input.getValues()));
+                case IN -> path.in(SpecificationsUtil.castListToRequiredType2(path.getJavaType(), input.getValues()));
 
             };
         };

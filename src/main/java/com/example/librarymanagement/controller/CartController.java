@@ -34,8 +34,10 @@ public class CartController {
     @Operation(summary = "API Get Cart Details")
     @PreAuthorize("hasRole('ROLE_READER')")
     @GetMapping(UrlConstant.Cart.GET_DETAILS)
-    public ResponseEntity<?> getCartDetails(@CurrentUser CustomUserDetails userDetails) {
-        return VsResponseUtil.success(cartService.getCartDetails(userDetails.getCardNumber()));
+    public ResponseEntity<?> getCartDetails(@CurrentUser CustomUserDetails userDetails,
+                                            @RequestParam(required = false) String title,
+                                            @RequestParam(required = false) String type) {
+        return VsResponseUtil.success(cartService.getCartDetails(userDetails.getCardNumber(), title, type));
     }
 
     @Operation(summary = "API Add Book to Cart")

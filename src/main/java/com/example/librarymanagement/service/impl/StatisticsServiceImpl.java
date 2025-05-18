@@ -23,6 +23,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     private final ReaderRepository readerRepository;
 
+    private final CartDetailRepository cartDetailRepository;
+
     private final BorrowReceiptRepository borrowReceiptRepository;
 
     private final BookBorrowRepository bookBorrowRepository;
@@ -40,7 +42,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public BorrowStatisticsResponseDto getBorrowStatistics() {
-        int borrowRequests = 0;
+        int borrowRequests = cartDetailRepository.countBorrowRequests();
         int currentlyBorrowed = borrowReceiptRepository.countCurrentlyBorrowed();
         int dueToday = borrowReceiptRepository.countDueToday();
         int overdue = borrowReceiptRepository.countOverdue();

@@ -10,19 +10,19 @@ import java.util.List;
 @Getter
 public class BorrowRequestSummaryResponseDto {
     private long cartId;
-    private String cartNumber;
+    private String cardNumber;
     private String fullName;
-    private List<String> borrowDocuments = new ArrayList<>();
+    private List<String> borrowedDocuments = new ArrayList<>();
 
     public void setCartDetails(List<CartDetail> filteredCartDetails){
         for(CartDetail cartDetail: filteredCartDetails){
-            borrowDocuments.add(cartDetail.getBook().getBookCode());
+            borrowedDocuments.add(cartDetail.getBook().getBookCode());
         }
     }
 
     public void setReader(Reader reader){
         this.cartId = reader.getCart().getId();
-        this.cartNumber = reader.getCardNumber();
+        this.cardNumber = reader.getCardNumber();
         this.fullName = reader.getFullName();
     }
 }
