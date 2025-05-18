@@ -29,6 +29,8 @@ public class BookDetailForReaderResponseDto {
 
     private final String imageUrl;
 
+    private final String pdfUrl;
+
     private final String summary;
 
     private final Integer publishingYear;
@@ -50,6 +52,7 @@ public class BookDetailForReaderResponseDto {
         this.bookSize = bookDefinition.getBookSize();
         this.language = bookDefinition.getLanguage();
         this.imageUrl = bookDefinition.getImageUrl();
+        this.pdfUrl = bookDefinition.getPdfUrl();
         this.summary = bookDefinition.getSummary();
         this.publishingYear = bookDefinition.getPublishingYear();
 

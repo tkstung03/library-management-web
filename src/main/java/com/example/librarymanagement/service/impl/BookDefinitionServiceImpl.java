@@ -36,12 +36,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.example.librarymanagement.domain.specification.BookDefinitionSpecification.*;
@@ -134,7 +135,7 @@ public class BookDefinitionServiceImpl implements BookDefinitionService {
     }
 
     @Override
-    public CommonResponseDto save(BookDefinitionRequestDto requestDto, MultipartFile file, String userId) {
+    public CommonResponseDto save(BookDefinitionRequestDto requestDto, MultipartFile file, MultipartFile pdf, String userId) {
         uploadFileUtil.checkImageIsValid(file);
 
         if (bookDefinitionRepository.existsByBookNumber(requestDto.getBookNumber())){
@@ -192,6 +193,36 @@ public class BookDefinitionServiceImpl implements BookDefinitionService {
             bookDefinition.setImageUrl(newImageUrl);
         }
 
+        // === Lưu file PDF vào local ===
+        if (pdf != null && !pdf.isEmpty()) {
+            try {
+                // Lấy đường dẫn thư mục gốc của dự án
+                String projectDir = System.getProperty("user.dir");
+
+                // Tạo đường dẫn đầy đủ tới thư mục uploads/pdfs
+                Path uploadPath = Paths.get(projectDir, "uploads", "pdfs");
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath); // Tạo thư mục nếu chưa tồn tại
+                }
+
+                // Tạo tên file duy nhất
+                String fileName = UUID.randomUUID() + "_" + pdf.getOriginalFilename();
+
+                // Đường dẫn lưu file
+                Path filePath = uploadPath.resolve(fileName);
+
+                // Lưu file vào đĩa
+                pdf.transferTo(filePath.toFile());
+
+                // Gán đường dẫn vào entity (dùng đường dẫn tương đối để phục vụ truy cập sau này)
+                bookDefinition.setPdfUrl("/uploads/pdfs/" + fileName);
+
+            } catch (IOException e) {
+                throw new RuntimeException("Lỗi khi lưu file PDF: " + e.getMessage(), e);
+            }
+        }
+
+
         bookDefinition.setActiveFlag(true);
         bookDefinitionRepository.save(bookDefinition);
 
@@ -202,7 +233,7 @@ public class BookDefinitionServiceImpl implements BookDefinitionService {
     }
 
     @Override
-    public CommonResponseDto update(Long id, BookDefinitionRequestDto requestDto, MultipartFile file, String userId) {
+    public CommonResponseDto update(Long id, BookDefinitionRequestDto requestDto, MultipartFile file, MultipartFile pdf, String userId) {
         uploadFileUtil.checkImageIsValid(file);
 
         BookDefinition bookDefinition = bookDefinitionRepository.findById(id)
@@ -316,6 +347,43 @@ public class BookDefinitionServiceImpl implements BookDefinitionService {
 
             bookDefinition.setImageUrl(newImageUrl);
         }
+
+        // === Cập nhật file PDF nếu có ===
+        if (pdf != null && !pdf.isEmpty()) {
+            try {
+                // Lấy đường dẫn thư mục gốc của dự án
+                String projectDir = System.getProperty("user.dir");
+
+                // Tạo đường dẫn đầy đủ tới thư mục uploads/pdfs
+                Path uploadPath = Paths.get(projectDir, "uploads", "pdfs");
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+
+                // Tạo tên file mới duy nhất
+                String fileName = UUID.randomUUID() + "_" + pdf.getOriginalFilename();
+
+                // Đường dẫn lưu file
+                Path filePath = uploadPath.resolve(fileName);
+
+                // Lưu file PDF mới
+                pdf.transferTo(filePath.toFile());
+
+                // Xóa file PDF cũ nếu có (lấy đường dẫn tương đối lưu trong pdfUrl)
+                if (bookDefinition.getPdfUrl() != null) {
+                    // Giải đường dẫn cũ thành đường dẫn thực tế trên disk
+                    Path oldFilePath = Paths.get(projectDir, bookDefinition.getPdfUrl().replaceFirst("^/", ""));
+                    UploadFileUtil.deleteLocalFile(oldFilePath.toString());
+                }
+
+                // Cập nhật đường dẫn file PDF mới (relative path để truy cập qua web)
+                bookDefinition.setPdfUrl("/uploads/pdfs/" + fileName);
+
+            } catch (IOException e) {
+                throw new RuntimeException("Lỗi khi lưu file PDF: " + e.getMessage(), e);
+            }
+        }
+
 
         // Lưu đối tượng bookDefinition đã cập nhật
         bookDefinitionRepository.save(bookDefinition);

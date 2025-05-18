@@ -10,6 +10,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -84,4 +85,20 @@ public class UploadFileUtil {
             }
         }
     }
+
+    public static void deleteLocalFile(String fileUrl) {
+        try {
+            // fileUrl dạng: "/uploads/pdfs/xxx.pdf" → cần bỏ dấu "/" đầu tiên
+            String relativePath = fileUrl.startsWith("/") ? fileUrl.substring(1) : fileUrl;
+            File file = new File(relativePath);
+
+            if (file.exists()) {
+                file.delete();
+            }
+        } catch (Exception e) {
+            // Ghi log nếu cần nhưng không throw ra để tránh chặn luồng xử lý chính
+            System.err.println("Không thể xóa file local: " + fileUrl);
+        }
+    }
+
 }

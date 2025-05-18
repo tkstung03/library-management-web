@@ -44,9 +44,10 @@ public class BookDefinitionController {
     public ResponseEntity<?> createBookDefinition(
             @Valid @ModelAttribute BookDefinitionRequestDto requestDto,
             @RequestParam(value = "image", required = false) MultipartFile image,
+            @RequestParam(value = "pdfFile", required = false) MultipartFile pdf,
             @CurrentUser CustomUserDetails userDetails
     ) {
-        return VsResponseUtil.success(HttpStatus.CREATED, bookDefinitionService.save(requestDto, image, userDetails.getUserId()));
+        return VsResponseUtil.success(HttpStatus.CREATED, bookDefinitionService.save(requestDto, image, pdf,userDetails.getUserId()));
     }
 
     @Operation(summary = "API Update Book Definition")
@@ -56,9 +57,10 @@ public class BookDefinitionController {
             @PathVariable Long id,
             @Valid @ModelAttribute BookDefinitionRequestDto requestDto,
             @RequestParam(value = "image", required = false) MultipartFile image,
+            @RequestParam(value = "pdfFile", required = false) MultipartFile pdf,
             @CurrentUser CustomUserDetails userDetails
     ) {
-        return VsResponseUtil.success(bookDefinitionService.update(id, requestDto, image, userDetails.getUserId()));
+        return VsResponseUtil.success(bookDefinitionService.update(id, requestDto, image, pdf, userDetails.getUserId()));
     }
 
     @Operation(summary = "API Delete Book Definition")

@@ -50,6 +50,7 @@ public class SecurityConfig {
             //resources
             "/images/**",
             "/files/**",
+            "/uploads/pdfs/*",
             //websocket
             "/ws/**"
     };

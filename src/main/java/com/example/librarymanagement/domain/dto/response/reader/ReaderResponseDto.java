@@ -1,5 +1,6 @@
 package com.example.librarymanagement.domain.dto.response.reader;
 
+import com.example.librarymanagement.constant.BorrowStatus;
 import com.example.librarymanagement.constant.CardStatus;
 import com.example.librarymanagement.constant.CardType;
 import com.example.librarymanagement.constant.Gender;
@@ -39,7 +40,7 @@ public class ReaderResponseDto {
 
     private final long libraryVisitCount;
 
-    public ReaderResponseDto(Reader reader){
+    public ReaderResponseDto(Reader reader) {
 
         this.id = reader.getId();
         this.cardType = reader.getCardType();
@@ -55,7 +56,10 @@ public class ReaderResponseDto {
         this.status = reader.getStatus();
 
         //so phieu muon
-        this.currentBorrowedBooks = reader.getBorrowReceipts().size();
+        this.currentBorrowedBooks = reader.getBorrowReceipts()
+                .stream()
+                .filter(borrowReceipt -> !borrowReceipt.getStatus().equals(BorrowStatus.RETURNED)).
+                count();
 
         //so luot vao thu vien
         this.libraryVisitCount = reader.getLibraryVisits().size();

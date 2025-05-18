@@ -4,7 +4,6 @@ import com.example.librarymanagement.domain.dto.common.CommonResponseDto;
 import com.example.librarymanagement.domain.dto.filter.BookDefinitionFilter;
 import com.example.librarymanagement.domain.dto.filter.QueryFilter;
 import com.example.librarymanagement.domain.dto.pagination.PaginationFullRequestDto;
-import com.example.librarymanagement.domain.dto.pagination.PaginationRequestDto;
 import com.example.librarymanagement.domain.dto.pagination.PaginationResponseDto;
 import com.example.librarymanagement.domain.dto.pagination.PaginationSortRequestDto;
 import com.example.librarymanagement.domain.dto.request.book.BookDefinitionRequestDto;
@@ -20,9 +19,9 @@ import java.util.Set;
 public interface BookDefinitionService {
     void init(String bookDefinitionCsvPath);
 
-    CommonResponseDto save(BookDefinitionRequestDto requestDto, MultipartFile image, String userId);
+    CommonResponseDto save(BookDefinitionRequestDto requestDto, MultipartFile image, MultipartFile pdf, String userId);
 
-    CommonResponseDto update(Long id, BookDefinitionRequestDto requestDto, MultipartFile image, String userId);
+    CommonResponseDto update(Long id, BookDefinitionRequestDto requestDto, MultipartFile image, MultipartFile pdf, String userId);
 
     CommonResponseDto delete(Long id, String userId);
 

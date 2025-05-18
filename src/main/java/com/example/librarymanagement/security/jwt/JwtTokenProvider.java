@@ -59,7 +59,7 @@ public class JwtTokenProvider {
             Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
             return true;
         } catch (Exception ex) {
-            log.warn("Invalid JWT token: {} - Token: {}", ex.getMessage(), token, ex);
+            log.warn("Invalid JWT token: {} - Token: {}", ex.getMessage(), token);
         }
         return false;
     }

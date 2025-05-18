@@ -78,6 +78,9 @@ public class BookDefinition { //biên mục
     @Column(name = "series")
     private String series;
 
+    @Column(name = "pdf_url")
+    private String pdfUrl;
+
     @Column(name = "additional_info")
     private String additionalInfo;
 
