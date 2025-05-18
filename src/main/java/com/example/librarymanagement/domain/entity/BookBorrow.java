@@ -28,7 +28,7 @@ public class BookBorrow { //chi tiết sách mượn
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private BookBorrowStatus bookBorrowStatus = BookBorrowStatus.NOT_RETURNED;
+    private BookBorrowStatus status = BookBorrowStatus.NOT_RETURNED;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", foreignKey = @ForeignKey(name = "FK_BOOK_BORROWS_BOOK_ID"), referencedColumnName = "book_id", nullable = false)

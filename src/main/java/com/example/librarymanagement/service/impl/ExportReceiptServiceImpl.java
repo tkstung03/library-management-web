@@ -72,7 +72,7 @@ public class ExportReceiptServiceImpl implements ExportReceiptService {
         long currentNumber = exportReceiptRepository.count();
         long nextNumber = currentNumber + 1;
 
-        return String.format("PX%05d",nextNumber);
+        return String.format("PX%03d",nextNumber);
     }
 
     @Override

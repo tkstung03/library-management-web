@@ -20,7 +20,6 @@ import com.example.librarymanagement.exception.NotFoundException;
 import com.example.librarymanagement.repository.*;
 import com.example.librarymanagement.service.*;
 import com.example.librarymanagement.util.PaginationUtil;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -224,7 +223,7 @@ public class BorrowReceiptServiceImpl implements BorrowReceiptService {
         boolean partiallyReturned = false;
 
         for (BookBorrow bookBorrow : borrowReceipt.getBookBorrows()) {
-            if (!BookBorrowStatus.RETURNED.equals(bookBorrow.getBookBorrowStatus())) {
+            if (!BookBorrowStatus.RETURNED.equals(bookBorrow.getStatus())) {
                 allReturned = false;
             } else {
                 partiallyReturned = true;
@@ -371,7 +370,7 @@ public class BorrowReceiptServiceImpl implements BorrowReceiptService {
                 book.setBookCondition(BookCondition.ON_LOAN);
 
                 bookBorrow.setReturnDate(null);
-                bookBorrow.setBookBorrowStatus(BookBorrowStatus.NOT_RETURNED);
+                bookBorrow.setStatus(BookBorrowStatus.NOT_RETURNED);
 
                 updatedBooks.add(book);
                 updatedBookBorrows.add(bookBorrow);

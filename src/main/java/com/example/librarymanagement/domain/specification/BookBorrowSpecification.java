@@ -16,9 +16,10 @@ public class BookBorrowSpecification {
             query.distinct(true);
             Predicate predicate = criteriaBuilder.conjunction();
 
-            if (status != null && status.isEmpty()) {
-                predicate = criteriaBuilder.and(predicate, root.get(BookBorrow_.bookBorrowStatus).in(status));
+            if (status != null && !status.isEmpty()) {
+                predicate = criteriaBuilder.and(predicate, root.get(BookBorrow_.status).in(status));
             }
+
 
             return predicate;
         });

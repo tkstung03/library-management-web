@@ -24,7 +24,6 @@ import com.example.librarymanagement.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -90,12 +89,12 @@ public class BookBorrowServiceImpl implements BookBorrowService {
 
         for (BookReturnRequestDto requestDto : requestDtos) {
             BookBorrow bookBorrow = getEntity(requestDto.getBookBorrowId());
-            if (!bookBorrow.getBookBorrowStatus().equals(BookBorrowStatus.NOT_RETURNED)){
+            if (!bookBorrow.getStatus().equals(BookBorrowStatus.NOT_RETURNED)){
                 continue;
             }
 
             bookBorrow.setReturnDate(LocalDate.now());
-            bookBorrow.setBookBorrowStatus(BookBorrowStatus.RETURNED);
+            bookBorrow.setStatus(BookBorrowStatus.RETURNED);
 
             Book book = bookBorrow.getBook();
             book.setBookCondition(BookCondition.AVAILABLE);
@@ -135,10 +134,10 @@ public class BookBorrowServiceImpl implements BookBorrowService {
 
         for (Long id : ids) {
             BookBorrow bookBorrow = getEntity(id);
-            if (!bookBorrow.getBookBorrowStatus().equals(BookBorrowStatus.NOT_RETURNED)) {
+            if (!bookBorrow.getStatus().equals(BookBorrowStatus.NOT_RETURNED)) {
                 continue;
             }
-            bookBorrow.setBookBorrowStatus(BookBorrowStatus.LOST);
+            bookBorrow.setStatus(BookBorrowStatus.LOST);
 
             Book book = bookBorrow.getBook();
             book.setBookCondition(BookCondition.LOST);

@@ -81,7 +81,7 @@ public class ImportReceiptServiceImpl implements ImportReceiptService {
 
             //Lặp qua số lượng tạo sách tương ứng
             for (int i = 0; i < quantity; i++) {
-                String bookCode = String.format("%s.%05d", bookDefinition.getBookNumber(), currentCount + i + 1);
+                String bookCode = String.format("%s.%03d", bookDefinition.getBookNumber(), currentCount + i + 1);
 
                 //Tao sach theo bien muc
                 Book book = new Book();
@@ -98,7 +98,7 @@ public class ImportReceiptServiceImpl implements ImportReceiptService {
     public String generateReceiptNumber() {
         long currentCount = importReceiptRepository.count();
         long nextNumber = currentCount + 1;
-        return String.format("PN%05d", nextNumber);
+        return String.format("PN%03d", nextNumber);
     }
 
     @Override

@@ -18,6 +18,6 @@ public class BookBorrowDto {
         this.title = bookBorrow.getBook().getBookDefinition().getTitle();
         this.bookCode = bookBorrow.getBook().getBookCode();
         this.returnDate = bookBorrow.getReturnDate();
-        this.status = bookBorrow.getBookBorrowStatus();
+        this.status = bookBorrow.getStatus();
     }
 }

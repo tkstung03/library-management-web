@@ -47,7 +47,7 @@ public class BookBorrowResponseDto {
         this.borrowDate = borrowReceipt.getBorrowDate();
         this.dueDate = borrowReceipt.getDueDate();
         this.returnDate = bookBorrow.getReturnDate();
-        this.status = bookBorrow.getBookBorrowStatus();
+        this.status = bookBorrow.getStatus();
         this.bookStatus =bookBorrow.getBook().getBookStatus();
 
     }
