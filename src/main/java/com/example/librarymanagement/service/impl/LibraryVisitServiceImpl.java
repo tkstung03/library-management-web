@@ -29,6 +29,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -104,6 +105,18 @@ public class LibraryVisitServiceImpl implements LibraryVisitService {
     @Override
     public LibraryVisitResponseDto findById(Long id) {
         return null;
+    }
+
+    @Override
+    public List<LibraryVisitResponseDto> getVisits(LocalDate entryTime, LocalDate exitTime) {
+        LocalDateTime startDateTime = entryTime.atStartOfDay();
+        LocalDateTime endDateTime = exitTime.atTime(23, 59, 59);
+
+        List<LibraryVisit> visits = libraryVisitRepository.findByEntryTimeBetween(startDateTime, endDateTime);
+
+        return visits.stream()
+                .map(LibraryVisitResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     @Override

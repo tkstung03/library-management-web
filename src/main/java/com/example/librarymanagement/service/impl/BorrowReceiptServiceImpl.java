@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -413,7 +414,8 @@ public class BorrowReceiptServiceImpl implements BorrowReceiptService {
 
     @Override
     public byte[] createOverdueListPdf() {
-        List<BorrowReceipt> borrowReceipts = borrowReceiptRepository.findAllOverdueRecords();
+        LocalDate today = LocalDate.now(ZoneId.systemDefault());
+        List<BorrowReceipt> borrowReceipts = borrowReceiptRepository.findAllOverdueRecords(today);
         if (borrowReceipts.isEmpty()) {
             throw new BadRequestException(ErrorMessage.BorrowReceipt.ERR_NOT_FOUND_OVERDUE);
         }

@@ -1,10 +1,12 @@
 package com.example.librarymanagement.service;
 
+import com.example.librarymanagement.domain.dto.response.library.LibraryVisitResponseDto;
 import com.example.librarymanagement.domain.entity.Book;
 import com.example.librarymanagement.domain.entity.BorrowReceipt;
 import com.example.librarymanagement.domain.entity.Reader;
 import com.example.librarymanagement.domain.entity.User;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface PdfService {
@@ -23,4 +25,6 @@ public interface PdfService {
     byte[] createBookListPdf(List<Book> books);
 
     byte[] createOverdueListPdf(List<BorrowReceipt> borrowReceipts);
+
+    public byte[] generateVisitReportPdf(List<LibraryVisitResponseDto> responseDtos, LocalDate startDate, LocalDate endDate);
 }

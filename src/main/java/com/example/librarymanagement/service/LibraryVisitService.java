@@ -7,6 +7,9 @@ import com.example.librarymanagement.domain.dto.pagination.PaginationResponseDto
 import com.example.librarymanagement.domain.dto.request.library.LibraryVisitRequestDto;
 import com.example.librarymanagement.domain.dto.response.library.LibraryVisitResponseDto;
 
+import java.time.LocalDate;
+import java.util.List;
+
 public interface LibraryVisitService {
 
     CommonResponseDto save(LibraryVisitRequestDto requestDto);
@@ -16,6 +19,9 @@ public interface LibraryVisitService {
     PaginationResponseDto<LibraryVisitResponseDto> findAll(PaginationFullRequestDto requestDto, LibraryVisitFilter filter);
 
     LibraryVisitResponseDto findById(Long id);
+
+    List<LibraryVisitResponseDto> getVisits(LocalDate fromDate, LocalDate toDate);
+
 
     CommonResponseDto closeLibrary();
 }

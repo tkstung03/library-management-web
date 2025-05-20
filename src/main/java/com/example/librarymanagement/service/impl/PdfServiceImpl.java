@@ -1,5 +1,6 @@
 package com.example.librarymanagement.service.impl;
 
+import com.example.librarymanagement.domain.dto.response.library.LibraryVisitResponseDto;
 import com.example.librarymanagement.domain.entity.*;
 import com.example.librarymanagement.service.PdfService;
 import com.itextpdf.text.*;
@@ -787,5 +788,69 @@ public class PdfServiceImpl implements PdfService {
         }
 
         return outputStream.toByteArray();
+    }
+
+    @Override
+    public byte[] generateVisitReportPdf(List<LibraryVisitResponseDto> responseDtos, LocalDate startDate, LocalDate endDate) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        try {
+            Document document = new Document(PageSize.A4.rotate(), 36, 36, 36, 36);
+            PdfWriter.getInstance(document, out);
+            document.open();
+
+            // Tiêu đề
+            Paragraph title = new Paragraph("THỐNG KÊ SỐ LƯỢT VÀO - RA THƯ VIỆN", headerFont);
+            title.setAlignment(Element.ALIGN_CENTER);
+            document.add(title);
+
+            // Ngày lọc
+            Paragraph dateRange = new Paragraph(
+                    "Từ ngày: " + startDate.format(formatter) + "    Đến ngày: " + endDate.format(formatter),
+                    boldFontMedium
+            );
+            dateRange.setSpacingBefore(10);
+            dateRange.setSpacingAfter(15);
+            document.add(dateRange);
+
+            // Tạo bảng
+            PdfPTable table = new PdfPTable(6);
+            table.setWidthPercentage(100);
+            table.setWidths(new float[]{1f, 2f, 4f, 3f, 3.5f, 3.5f});
+
+            addTableHeader(table);
+            addTableContent(table, responseDtos);
+
+            document.add(table);
+
+            document.close();
+        } catch (DocumentException e) {
+            log.error("Error generating PDF: {}", e.getMessage());
+        }
+
+        return out.toByteArray();
+    }
+    private void addTableHeader(PdfPTable table) {
+        List<String> headers = Arrays.asList("STT", "Số thẻ", "Họ tên", "Loại thẻ", "Giờ vào", "Giờ ra");
+        for (String header : headers) {
+            PdfPCell cell = new PdfPCell(new Phrase(header, boldFontSmall));
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            table.addCell(cell);
+        }
+    }
+
+    private void addTableContent(PdfPTable table, List<LibraryVisitResponseDto> visitLogs) {
+        int index = 1;
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        for (LibraryVisitResponseDto log : visitLogs) {
+            table.addCell(new Phrase(String.valueOf(index++), normalFontSmall));
+            table.addCell(new Phrase(log.getCardNumber(), normalFontSmall));
+            table.addCell(new Phrase(log.getFullName(), normalFontSmall));
+            table.addCell(new Phrase(log.getCardType(), normalFontSmall));
+            table.addCell(new Phrase(log.getEntryTime() != null ? log.getEntryTime().format(dateTimeFormatter) : "", normalFontSmall));
+            table.addCell(new Phrase(log.getExitTime() != null ? log.getExitTime().format(dateTimeFormatter) : "", normalFontSmall));
+        }
     }
 }

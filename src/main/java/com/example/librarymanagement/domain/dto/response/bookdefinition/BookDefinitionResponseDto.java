@@ -108,7 +108,7 @@ public class BookDefinitionResponseDto {
 
         //classification symbol
         ClassificationSymbol cs = bookDefinition.getClassificationSymbol();
-        this.classificationSymbol = p != null ? new BaseEntityDto(cs.getId(), cs.getName()) : null;
+        this.classificationSymbol = cs != null ? new BaseEntityDto(cs.getId(), cs.getName()) : null;
 
     }
 }

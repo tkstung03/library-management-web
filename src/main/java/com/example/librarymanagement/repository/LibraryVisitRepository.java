@@ -16,4 +16,7 @@ public interface LibraryVisitRepository extends JpaRepository<LibraryVisit, Long
 
     //Tìm tất cả các lượt vào thư viện trong khoảng thời gian, chưa có giờ ra
     List<LibraryVisit> findAllByEntryTimeBetweenAndExitTimeIsNull(LocalDateTime start, LocalDateTime end);
+
+    List<LibraryVisit> findByEntryTimeBetween(LocalDateTime from, LocalDateTime to);
+
 }

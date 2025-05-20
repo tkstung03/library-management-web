@@ -28,8 +28,8 @@ public interface BorrowReceiptRepository extends JpaRepository<BorrowReceipt, Lo
     @Query("SELECT COUNT(br) FROM BorrowReceipt br WHERE br.dueDate < CURRENT_DATE AND br.status != 'RETURNED'")
     int countOverdue();
 
-    @Query("SELECT br FROM BorrowReceipt br WHERE br.dueDate < CURRENT_DATE AND br.status != 'RETURNED'")
-    List<BorrowReceipt> findAllOverdueRecords();
+    @Query("SELECT br FROM BorrowReceipt br WHERE br.dueDate < :today AND br.status != 'RETURNED'")
+    List<BorrowReceipt> findAllOverdueRecords(@Param("today") LocalDate today);
 
     @Query("SELECT br FROM BorrowReceipt br WHERE br.dueDate < CURRENT_DATE AND br.dueDate >= :daysAgo AND br.status != 'RETURNED'")
     List<BorrowReceipt> findOverdueRecords(@Param("daysAgo") LocalDate daysAgo);

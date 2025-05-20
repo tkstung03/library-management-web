@@ -93,6 +93,9 @@ public class AuthServiceImpl implements AuthService {
             if (customUserDetails.getCardNumber() == null) {
                 throw new UnauthorizedException(ErrorMessage.Auth.ERR_INCORRECT_USERNAME_PASSWORD);
             }
+            if (customUserDetails.getCardStatus() == CardStatus.SUSPENDED) {
+                throw new UnauthorizedException(ErrorMessage.Auth.ERR_ACCOUNT_LOCKED );
+            }
             if (customUserDetails.getCardStatus() != CardStatus.ACTIVE) {
                 throw new UnauthorizedException(ErrorMessage.Auth.ERR_ACCOUNT_NOT_ACTIVE);
             }
