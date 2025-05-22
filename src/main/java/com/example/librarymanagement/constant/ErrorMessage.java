@@ -167,6 +167,12 @@ public class ErrorMessage {
         public static final String ERR_NOT_FOUND_ID = "exception.news.not.found.id";
     }
 
+    public static class Major {
+        public static final String ERR_NOT_FOUND_ID = "exception.major.not.found.id";
+        public static final String ERR_DUPLICATE_NAME = "exception.major.duplicate.name";
+        public static final String ERR_HAS_LINKED_READERS = "exception.major.has.linked.reader";
+    }
+
     public static class UserGroup {
         public static final String ERR_NOT_FOUND_ID = "exception.user.group.not.found.id";
         public static final String ERR_DUPLICATE_CODE = "exception.user.group.duplicate.code";

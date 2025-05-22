@@ -92,4 +92,9 @@ public class Reader {
     @OneToMany(mappedBy = "reader", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Review> reviews = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "major_id", foreignKey = @ForeignKey(name = "FK_READER_MAJOR_ID"), referencedColumnName = "major_id")
+    @JsonIgnore
+    private Major major;
 }
