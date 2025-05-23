@@ -4,6 +4,7 @@ import com.example.librarymanagement.constant.BorrowStatus;
 import com.example.librarymanagement.constant.CardStatus;
 import com.example.librarymanagement.constant.CardType;
 import com.example.librarymanagement.constant.Gender;
+import com.example.librarymanagement.domain.dto.response.major.MajorResponseDto;
 import com.example.librarymanagement.domain.entity.Reader;
 import lombok.Getter;
 
@@ -40,6 +41,8 @@ public class ReaderResponseDto {
 
     private final long libraryVisitCount;
 
+    private final MajorResponseDto major;
+
     public ReaderResponseDto(Reader reader) {
 
         this.id = reader.getId();
@@ -63,5 +66,7 @@ public class ReaderResponseDto {
 
         //so luot vao thu vien
         this.libraryVisitCount = reader.getLibraryVisits().size();
+
+        this.major = reader.getMajor() != null ? new MajorResponseDto(reader.getMajor()) : null;
     }
 }

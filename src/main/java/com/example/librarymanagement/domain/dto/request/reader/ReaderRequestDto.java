@@ -52,4 +52,7 @@ public class ReaderRequestDto {
 
     @NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED)
     private CardStatus status;
+
+    @NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED)
+    private Long majorId;
 }

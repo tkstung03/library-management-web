@@ -10,6 +10,7 @@ import com.example.librarymanagement.domain.dto.request.reader.ReaderRequestDto;
 import com.example.librarymanagement.domain.dto.response.library.LibraryInfoResponseDto;
 import com.example.librarymanagement.domain.dto.response.reader.ReaderDetailResponseDto;
 import com.example.librarymanagement.domain.dto.response.reader.ReaderResponseDto;
+import com.example.librarymanagement.domain.entity.Major;
 import com.example.librarymanagement.domain.entity.Reader;
 import com.example.librarymanagement.domain.mapper.ReaderMapper;
 import com.example.librarymanagement.domain.specification.ReaderSpecification;
@@ -17,6 +18,7 @@ import com.example.librarymanagement.exception.BadRequestException;
 import com.example.librarymanagement.exception.ConflictException;
 import com.example.librarymanagement.exception.ForbiddenException;
 import com.example.librarymanagement.exception.NotFoundException;
+import com.example.librarymanagement.repository.MajorRepository;
 import com.example.librarymanagement.repository.ReaderRepository;
 import com.example.librarymanagement.service.LogService;
 import com.example.librarymanagement.service.PdfService;
@@ -63,6 +65,8 @@ public class ReaderServiceImpl implements ReaderService {
     private final PdfService pdfService;
 
     private final SystemSettingService systemSettingService;
+
+    private final MajorRepository majorRepository;
 
     public static void validateReaderStatus(Reader reader) {
         switch (reader.getStatus()) {
@@ -153,7 +157,10 @@ public class ReaderServiceImpl implements ReaderService {
             throw new ConflictException(ErrorMessage.Reader.ERR_DUPLICATE_EMAIL, requestDto.getEmail());
         }
 
+        Major major = majorRepository.findById(requestDto.getMajorId()).orElseThrow(() -> new NotFoundException(ErrorMessage.Major.ERR_NOT_FOUND_ID, requestDto.getMajorId()));
+
         Reader reader = readerMapper.toReader(requestDto);
+        reader.setMajor(major);
         reader.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         reader.setCreatedDate(LocalDate.now());
         if (image != null && !image.isEmpty()) {
@@ -181,6 +188,11 @@ public class ReaderServiceImpl implements ReaderService {
         if (password != null && !password.isEmpty()) {
             validatePassword(password);
             reader.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+        }
+
+        if(reader.getMajor() == null || !requestDto.getMajorId().equals(reader.getMajor().getId())){
+            Major major = majorRepository.findById(requestDto.getMajorId()).orElseThrow(() -> new NotFoundException(ErrorMessage.Major.ERR_NOT_FOUND_ID, requestDto.getMajorId()));
+            reader.setMajor(major);
         }
 
         if (!Objects.equals(reader.getCardNumber(), requestDto.getCardNumber()) &&
