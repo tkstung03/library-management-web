@@ -23,7 +23,7 @@ public class LibraryVisitSpecification {
 
             Predicate predicate = criteriaBuilder.conjunction();
 
-            if (filter != null || filter.getStartDate() == null && filter.getEndDate() == null) {
+            if (filter == null || (filter.getStartDate() == null && filter.getEndDate() == null)) {
                 LocalDate today = LocalDate.now();
                 LocalDateTime startOfDay = today.atStartOfDay();
                 LocalDateTime endOfDay = today.atTime(LocalTime.MAX);
