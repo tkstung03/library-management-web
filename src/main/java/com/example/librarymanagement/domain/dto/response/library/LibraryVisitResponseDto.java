@@ -24,6 +24,8 @@ public class LibraryVisitResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = CommonConstant.PATTERN_DATE_TIME)
     private final LocalDateTime exitTime;
 
+    private final String major;
+
     public LibraryVisitResponseDto(LibraryVisit libraryVisit){
         this.id = libraryVisit.getId();
         this.cardNumber = libraryVisit.getReader().getCardNumber();
@@ -31,6 +33,9 @@ public class LibraryVisitResponseDto {
         this.cardType = libraryVisit.getReader().getCardType().getDisplayName();
         this.entryTime = libraryVisit.getEntryTime();
         this.exitTime = libraryVisit.getExitTime();
+        this.major = libraryVisit.getReader().getMajor() != null
+                ? libraryVisit.getReader().getMajor().getName()
+                : null;
     }
 
 }

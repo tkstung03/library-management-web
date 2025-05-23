@@ -72,7 +72,7 @@ public class ReaderViolationServiceImpl implements ReaderViolationService {
     @Override
     public CommonResponseDto update(Long id, ReaderViolationRequestDto requestDto, String userId) {
         ReaderViolation violation = readerViolationMapper.toReaderViolation(requestDto);
-        if (!Objects.equals(violation.getReader().getId(), requestDto.getReaderId())) {
+        if (violation.getReader() == null || !Objects.equals(violation.getReader().getId(), requestDto.getReaderId())) {
             getReader(requestDto, violation);
         }
 

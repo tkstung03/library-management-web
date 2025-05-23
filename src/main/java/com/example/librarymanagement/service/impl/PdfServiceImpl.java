@@ -814,9 +814,9 @@ public class PdfServiceImpl implements PdfService {
             document.add(dateRange);
 
             // Tạo bảng
-            PdfPTable table = new PdfPTable(6);
+            PdfPTable table = new PdfPTable(7);
             table.setWidthPercentage(100);
-            table.setWidths(new float[]{1f, 2f, 4f, 3f, 3.5f, 3.5f});
+            table.setWidths(new float[]{1f, 2f, 4f, 3f, 3f, 3.5f, 3.5f});
 
             addTableHeader(table);
             addTableContent(table, responseDtos);
@@ -831,7 +831,7 @@ public class PdfServiceImpl implements PdfService {
         return out.toByteArray();
     }
     private void addTableHeader(PdfPTable table) {
-        List<String> headers = Arrays.asList("STT", "Số thẻ", "Họ tên", "Loại thẻ", "Giờ vào", "Giờ ra");
+        List<String> headers = Arrays.asList("STT", "Số thẻ", "Họ tên", "Loại thẻ", "Chuyên ngành", "Giờ vào", "Giờ ra");
         for (String header : headers) {
             PdfPCell cell = new PdfPCell(new Phrase(header, boldFontSmall));
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -849,6 +849,7 @@ public class PdfServiceImpl implements PdfService {
             table.addCell(new Phrase(log.getCardNumber(), normalFontSmall));
             table.addCell(new Phrase(log.getFullName(), normalFontSmall));
             table.addCell(new Phrase(log.getCardType(), normalFontSmall));
+            table.addCell(new Phrase(log.getMajor() != null ? log.getMajor() : "", normalFontSmall));
             table.addCell(new Phrase(log.getEntryTime() != null ? log.getEntryTime().format(dateTimeFormatter) : "", normalFontSmall));
             table.addCell(new Phrase(log.getExitTime() != null ? log.getExitTime().format(dateTimeFormatter) : "", normalFontSmall));
         }
