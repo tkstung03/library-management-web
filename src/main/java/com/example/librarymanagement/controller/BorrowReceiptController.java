@@ -152,7 +152,7 @@ public class BorrowReceiptController {
         byte[] pdfBytes = borrowReceiptService.createOverdueListPdf();
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=overdue_list.pdf");
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=overdue_list.pdf");
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE);
 
         return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
