@@ -27,4 +27,7 @@ public interface ReaderService {
     byte[] generateReaderCards(CreateReaderCardsRequestDto requestDto);
 
     ReaderDetailResponseDto getReaderDetailsByCardNumber(String cardNumber);
+
+    Object importReadersFromExcel(MultipartFile file, String userId);
+
 }

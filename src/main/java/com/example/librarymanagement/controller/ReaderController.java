@@ -104,4 +104,15 @@ public class ReaderController {
     public ResponseEntity<?> getReaderDetails(@CurrentUser CustomUserDetails userDetails) {
         return VsResponseUtil.success(readerService.getReaderDetailsByCardNumber(userDetails.getCardNumber()));
     }
+
+    @Operation(summary = "API Import Readers from Excel file")
+    @PreAuthorize("hasRole('ROLE_MANAGE_READER')")
+    @PostMapping(value = UrlConstant.Reader.IMPORT, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> importReaders(
+            @RequestParam("file") MultipartFile file,
+            @CurrentUser CustomUserDetails userDetails
+    ) {
+        return VsResponseUtil.success(HttpStatus.CREATED, readerService.importReadersFromExcel(file, userDetails.getUserId()));
+    }
+
 }

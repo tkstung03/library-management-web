@@ -96,7 +96,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public byte[] getBooksPdfContent(Set<Long> ids) {
         List<Book> books = bookRepository.findAllById(ids);
-        return pdfService.createPdfFromBooks(books);
+        return pdfService.  createPdfFromBooks(books);
     }
 
     @Override

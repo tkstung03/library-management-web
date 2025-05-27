@@ -28,6 +28,8 @@ import com.example.librarymanagement.util.PaginationUtil;
 import com.example.librarymanagement.util.UploadFileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
@@ -39,9 +41,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Log4j2
 @Service
@@ -74,7 +76,7 @@ public class ReaderServiceImpl implements ReaderService {
             case SUSPENDED -> throw new ForbiddenException(ErrorMessage.Reader.ERR_READER_SUSPENDED);
             case REVOKED -> throw new ForbiddenException(ErrorMessage.Reader.ERR_READER_REVOKED);
         }
-        if (reader.getExpiryDate().isBefore(LocalDate.now())){
+        if (reader.getExpiryDate().isBefore(LocalDate.now())) {
             throw new ForbiddenException(ErrorMessage.Reader.ERR_READER_EXPIRED);
         }
     }
@@ -94,6 +96,7 @@ public class ReaderServiceImpl implements ReaderService {
             throw new BadRequestException(ErrorMessage.INVALID_FORMAT_PASSWORD);
         }
     }
+
     @Override
     public void init(String readerCsvPath) {
         log.info("Initializing reader import from CSV: {}", readerCsvPath);
@@ -190,7 +193,7 @@ public class ReaderServiceImpl implements ReaderService {
             reader.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         }
 
-        if(reader.getMajor() == null || !requestDto.getMajorId().equals(reader.getMajor().getId())){
+        if (reader.getMajor() == null || !requestDto.getMajorId().equals(reader.getMajor().getId())) {
             Major major = majorRepository.findById(requestDto.getMajorId()).orElseThrow(() -> new NotFoundException(ErrorMessage.Major.ERR_NOT_FOUND_ID, requestDto.getMajorId()));
             reader.setMajor(major);
         }
@@ -308,4 +311,77 @@ public class ReaderServiceImpl implements ReaderService {
 
         return new ReaderDetailResponseDto(reader);
     }
+
+    @Override
+    public Object importReadersFromExcel(MultipartFile file, String userId) {
+        try (InputStream inputStream = file.getInputStream()) {
+            Workbook workbook = new XSSFWorkbook(inputStream);
+            Sheet sheet = workbook.getSheetAt(0);
+
+            List<ReaderRequestDto> readers = new ArrayList<>();
+            List<String> skippedCardNumbers = new ArrayList<>();
+
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) { // Bỏ qua header
+                Row row = sheet.getRow(i);
+                if (row == null) continue;
+
+                String cardNumber = getStringCellValue(row.getCell(0));
+
+                // Kiểm tra trùng cardNumber trước khi tạo ReaderRequestDto
+                if (readerRepository.existsByCardNumber(cardNumber)) {
+                    skippedCardNumbers.add(cardNumber);
+                    log.warn("Reader với cardNumber '{}' đã tồn tại, bỏ qua dòng {}", cardNumber, i + 1);
+                    continue;
+                }
+
+                ReaderRequestDto dto = new ReaderRequestDto();
+                dto.setCardNumber(cardNumber);
+                dto.setFullName(getStringCellValue(row.getCell(1)));
+                dto.setGender(Gender.valueOf(getStringCellValue(row.getCell(2)).toUpperCase()));
+                dto.setDateOfBirth(LocalDate.parse(getStringCellValue(row.getCell(3))));
+                dto.setPhoneNumber(getStringCellValue(row.getCell(4)));
+                dto.setCardType(CardType.valueOf(getStringCellValue(row.getCell(5)).toUpperCase()));
+                dto.setStatus(CardStatus.valueOf(getStringCellValue(row.getCell(6)).toUpperCase()));
+                dto.setExpiryDate(LocalDate.parse(getStringCellValue(row.getCell(7))));
+                dto.setMajorId(Long.parseLong(getStringCellValue(row.getCell(8))));
+                dto.setEmail(getStringCellValue(row.getCell(9)));
+                dto.setPassword(getStringCellValue(row.getCell(10)));
+
+                readers.add(dto);
+            }
+
+            List<Object> result = new ArrayList<>();
+            for (ReaderRequestDto dto : readers) {
+                try {
+                    Object saved = this.save(dto, null, userId); // Không xử lý ảnh
+                    result.add(saved);
+                } catch (Exception e) {
+                    log.error("Không thể lưu reader với cardNumber {}: {}", dto.getCardNumber(), e.getMessage());
+                }
+            }
+
+            // Gộp kết quả trả về
+            Map<String, Object> response = new HashMap<>();
+            response.put("importedCount", result.size());
+            response.put("skippedCount", skippedCardNumbers.size());
+            response.put("skippedCardNumbers", skippedCardNumbers);
+            response.put("readers", result);
+
+            return response;
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi khi xử lý file Excel: " + e.getMessage(), e);
+        }
+    }
+
+
+    private String getStringCellValue(Cell cell) {
+        if (cell == null) return "";
+        if (cell.getCellType() == CellType.NUMERIC) {
+            return String.valueOf((long) cell.getNumericCellValue());
+        } else {
+            return cell.getStringCellValue() != null ? cell.getStringCellValue().trim() : "";
+        }
+    }
+
+
 }
