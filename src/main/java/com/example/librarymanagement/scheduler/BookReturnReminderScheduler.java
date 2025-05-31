@@ -28,7 +28,7 @@ public class BookReturnReminderScheduler {
 
     private final BorrowReceiptRepository borrowReceiptRepository;
 
-    @Scheduled(cron = "0 25 15 * * ?")// Chạy lúc 15:25 mỗi ngày
+    @Scheduled(cron = "0 15 16 * * ?")// Chạy lúc 15:25 mỗi ngày
     @Transactional
     public void sendReminderEmails() {
         LocalDate overdueThreshold = LocalDate.now().minusDays(maxOverdueDays);
