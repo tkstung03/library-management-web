@@ -314,13 +314,15 @@ public class AuthServiceImpl implements AuthService {
         if (!requestDto.getPassword().equals(requestDto.getRepeatPassword())) {
             throw new BadRequestException(ErrorMessage.Auth.ERR_INCORRECT_PASSWORD);
         }
+
         Reader reader = readerRepository.findByCardNumber(cardNumber)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.Reader.ERR_NOT_FOUND_CARD_NUMBER, cardNumber));
 
-        boolean isCorrectPassword = passwordEncoder.matches(requestDto.getPassword(), reader.getPassword());
+        boolean isCorrectPassword = passwordEncoder.matches(requestDto.getOldPassword(), reader.getPassword());
         if (!isCorrectPassword) {
             throw new BadRequestException(ErrorMessage.Auth.ERR_INCORRECT_PASSWORD);
         }
+
         reader.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         readerRepository.save(reader);
 
@@ -331,6 +333,8 @@ public class AuthServiceImpl implements AuthService {
         String message = messageSource.getMessage(SuccessMessage.User.CHANGE_PASSWORD, null, LocaleContextHolder.getLocale());
         return new CommonResponseDto(message);
     }
+
+
 
     @Override
     public CurrentUserLoginResponseDto getCurrentUser(CustomUserDetails userDetails) {
