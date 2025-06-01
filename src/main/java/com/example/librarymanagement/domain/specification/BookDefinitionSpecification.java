@@ -43,6 +43,13 @@ public class BookDefinitionSpecification {
                                 criteriaBuilder.like(root.get(BookDefinition_.bookNumber),
                                         "%" + keyword + "%"));
                     }
+                    case "author" -> {
+                        Join<BookDefinition, BookAuthor> bookAuthorJoin = root.join(BookDefinition_.bookAuthors, JoinType.LEFT);
+                        Join<BookAuthor, Author> authorJoin = bookAuthorJoin.join(BookAuthor_.author, JoinType.LEFT);
+                        predicate = criteriaBuilder.and(predicate,
+                                criteriaBuilder.like(criteriaBuilder.lower(authorJoin.get(Author_.fullName)), "%" + keyword.toLowerCase() + "%"));
+                    }
+
                 }
             }
 

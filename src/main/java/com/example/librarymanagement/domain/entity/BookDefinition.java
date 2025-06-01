@@ -94,7 +94,7 @@ public class BookDefinition { //biên mục
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_set_id", foreignKey = @ForeignKey(name = "FK_BOOK_DEFINITION_BOOK_SET_ID"), referencedColumnName = "book_set_id")
     @JsonIgnore
-    private BookSet bookSet;//Bộ sách
+    private BookSet bookSet; //Bộ sách
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", foreignKey = @ForeignKey(name = "FK_BOOK_DEFINITION_CATEGORY_ID"), referencedColumnName = "category_id", nullable = false)

@@ -22,6 +22,5 @@ public interface LibraryVisitService {
 
     List<LibraryVisitResponseDto> getVisits(LocalDate fromDate, LocalDate toDate);
 
-
     CommonResponseDto closeLibrary();
 }

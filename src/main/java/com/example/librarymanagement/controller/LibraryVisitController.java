@@ -7,6 +7,7 @@ import com.example.librarymanagement.domain.dto.filter.LibraryVisitFilter;
 import com.example.librarymanagement.domain.dto.pagination.PaginationFullRequestDto;
 import com.example.librarymanagement.domain.dto.request.library.LibraryVisitRequestDto;
 import com.example.librarymanagement.domain.dto.response.library.LibraryVisitResponseDto;
+import com.example.librarymanagement.service.ExcelExportService;
 import com.example.librarymanagement.service.LibraryVisitService;
 import com.example.librarymanagement.service.PdfService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -34,6 +36,7 @@ import java.util.List;
 public class LibraryVisitController {
     PdfService pdfService;
     LibraryVisitService libraryVisitService;
+    ExcelExportService excelExportService;
 
     @Operation(summary = "API Create Visit")
     @PreAuthorize("hasRole('ROLE_MANAGE_READER')")
@@ -93,5 +96,24 @@ public class LibraryVisitController {
 
         return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
+    @Operation(summary = "Export Excel thống kê lượt vào - ra thư viện theo khoảng ngày")
+    @PreAuthorize("hasRole('ROLE_MANAGE_READER')")
+    @GetMapping(UrlConstant.LibraryVisit.EXPORT_EXCEL)
+    public ResponseEntity<byte[]> exportVisitReportToExcel(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+    ) throws IOException {
+        List<LibraryVisitResponseDto> visitLogs =
+                libraryVisitService.getVisits(startDate, endDate);
+
+        byte[] excelBytes = excelExportService.createLibraryVisitReport(visitLogs, startDate, endDate);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+        headers.setContentDispositionFormData("filename", "thong_ke_luot_vao_ra.xlsx");
+
+        return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
+    }
+
 
 }

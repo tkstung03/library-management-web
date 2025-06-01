@@ -284,6 +284,7 @@ public class UrlConstant {
         public static final String DELETE = PRE_FIX + "/{id}";
         public static final String CLOSE = PRE_FIX + "/close";
         public static final String EXPORT_PDF = PRE_FIX + "/export-pdf";
+        public static final String EXPORT_EXCEL = PRE_FIX + "/export-excel";
     }
 
     public static class Stats {
