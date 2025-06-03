@@ -27,5 +27,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long>, JpaSp
             "LEFT JOIN bd.books b " +
             "GROUP BY c.id, c.categoryName " +
             "ORDER BY COUNT(b.id) DESC")
-    List<CategoryStatisticsResponseDto> findCategoryStatistics(Pageable pageable);
+    List<CategoryStatisticsResponseDto> findCategoryStatistics(); // ← KHÔNG có Pageable
+
 }

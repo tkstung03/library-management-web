@@ -154,6 +154,8 @@ public class UrlConstant {
         public static final String GET_BOOKS = ADMIN_URL + PRE_FIX + "/books";
 
         public static final String GET_BOOKS_FOR_USER = PRE_FIX + "/books";
+        public static final String GET_MOST_BORROWED_BOOKS_FOR_USER = PRE_FIX + "/books/most-borrowed";
+
         public static final String GET_BOOK_DETAIL_FOR_USER = PRE_FIX + "/books/{id}";
         public static final String ADVANCED_SEARCH = PRE_FIX + "/advanced-search";
         public static final String SEARCH = PRE_FIX + "/search";
@@ -323,7 +325,7 @@ public class UrlConstant {
 
         public static final String GET_BY_USER = PRE_FIX;
         public static final String MARK_AS_READ = PRE_FIX + "/read/{notificationId}";
-        public static final String  DELETE = PRE_FIX + "/{notificationId}";
+        public static final String DELETE = PRE_FIX + "/{notificationId}";
     }
 
     public static class SystemSetting {

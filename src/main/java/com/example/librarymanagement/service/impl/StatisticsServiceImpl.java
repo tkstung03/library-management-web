@@ -69,7 +69,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public List<CategoryStatisticsResponseDto> getPublicationCountByCategory(PaginationRequestDto requestDto) {
-        Pageable pageable = PaginationUtil.buildPageable(requestDto);
-        return categoryRepository.findCategoryStatistics(pageable);
+        return categoryRepository.findCategoryStatistics();
     }
+
 }

@@ -7,12 +7,12 @@ import com.example.librarymanagement.constant.UrlConstant;
 import com.example.librarymanagement.domain.dto.filter.BookDefinitionFilter;
 import com.example.librarymanagement.domain.dto.filter.QueryFilter;
 import com.example.librarymanagement.domain.dto.pagination.PaginationFullRequestDto;
+import com.example.librarymanagement.domain.dto.pagination.PaginationRequestDto;
 import com.example.librarymanagement.domain.dto.pagination.PaginationSortRequestDto;
 import com.example.librarymanagement.domain.dto.request.book.BookDefinitionRequestDto;
 import com.example.librarymanagement.security.CustomUserDetails;
 import com.example.librarymanagement.service.BookDefinitionService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -47,7 +47,7 @@ public class BookDefinitionController {
             @RequestParam(value = "pdfFile", required = false) MultipartFile pdf,
             @CurrentUser CustomUserDetails userDetails
     ) {
-        return VsResponseUtil.success(HttpStatus.CREATED, bookDefinitionService.save(requestDto, image, pdf,userDetails.getUserId()));
+        return VsResponseUtil.success(HttpStatus.CREATED, bookDefinitionService.save(requestDto, image, pdf, userDetails.getUserId()));
     }
 
     @Operation(summary = "API Update Book Definition")
@@ -127,6 +127,11 @@ public class BookDefinitionController {
         return VsResponseUtil.success(bookDefinitionService.getBooksForUser(requestDto, categoryGroupId, categoryId, authorId, filterType));
     }
 
+    @Operation(summary = "API Get Most Borrowed Books For User")
+    @GetMapping(UrlConstant.BookDefinition.GET_MOST_BORROWED_BOOKS_FOR_USER)
+    public ResponseEntity<?> getMostBorrowedBooksForUser(@ParameterObject PaginationRequestDto requestDto) {
+        return VsResponseUtil.success(bookDefinitionService.getMostBorrowedBooksForUser(requestDto));
+    }
 
     @Operation(summary = "API Get Book Detail For User")
     @GetMapping(UrlConstant.BookDefinition.GET_BOOK_DETAIL_FOR_USER)

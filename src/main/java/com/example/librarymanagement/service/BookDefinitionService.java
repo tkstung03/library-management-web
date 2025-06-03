@@ -4,6 +4,7 @@ import com.example.librarymanagement.domain.dto.common.CommonResponseDto;
 import com.example.librarymanagement.domain.dto.filter.BookDefinitionFilter;
 import com.example.librarymanagement.domain.dto.filter.QueryFilter;
 import com.example.librarymanagement.domain.dto.pagination.PaginationFullRequestDto;
+import com.example.librarymanagement.domain.dto.pagination.PaginationRequestDto;
 import com.example.librarymanagement.domain.dto.pagination.PaginationResponseDto;
 import com.example.librarymanagement.domain.dto.pagination.PaginationSortRequestDto;
 import com.example.librarymanagement.domain.dto.request.book.BookDefinitionRequestDto;
@@ -37,6 +38,8 @@ public interface BookDefinitionService {
 
     PaginationResponseDto<BookForReaderResponseDto> getBooksForUser(PaginationFullRequestDto requestDto, Long categoryGroupId, Long categoryId, Long authorId, String filterType);
 
+    PaginationResponseDto<BookForReaderResponseDto> getMostBorrowedBooksForUser(PaginationRequestDto requestDto);
+
     BookDetailForReaderResponseDto getBookDetailForUser(Long id);
 
     PaginationResponseDto<BookForReaderResponseDto> advancedSearchBooks(List<QueryFilter> queryFilters, PaginationSortRequestDto requestDto);
@@ -50,4 +53,5 @@ public interface BookDefinitionService {
     byte[] getBooksLabelType2PdfContent(Set<Long> ids);
 
     byte[] generateBookListPdf();
+
 }

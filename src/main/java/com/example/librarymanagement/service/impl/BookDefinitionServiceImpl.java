@@ -36,7 +36,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -91,7 +90,7 @@ public class BookDefinitionServiceImpl implements BookDefinitionService {
             return;
         }
 
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(bookDefinitionCsvPath))){
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(bookDefinitionCsvPath))) {
             String line;
             bufferedReader.readLine();
 
@@ -127,9 +126,8 @@ public class BookDefinitionServiceImpl implements BookDefinitionService {
                 }
             }
 
-            log.info("Book definition import completed successfully!" );
-        }
-        catch (IOException e) {
+            log.info("Book definition import completed successfully!");
+        } catch (IOException e) {
             log.error("Error while initializing book definitions from CSV: {}", e.getMessage(), e);
         }
     }
@@ -138,7 +136,7 @@ public class BookDefinitionServiceImpl implements BookDefinitionService {
     public CommonResponseDto save(BookDefinitionRequestDto requestDto, MultipartFile file, MultipartFile pdf, String userId) {
         uploadFileUtil.checkImageIsValid(file);
 
-        if (bookDefinitionRepository.existsByBookNumber(requestDto.getBookNumber())){
+        if (bookDefinitionRepository.existsByBookNumber(requestDto.getBookNumber())) {
             throw new BadRequestException(ErrorMessage.BookDefinition.ERR_DUPLICATE_CODE, requestDto.getBookNumber());
         }
 
@@ -181,7 +179,7 @@ public class BookDefinitionServiceImpl implements BookDefinitionService {
                 bookAuthor.setBookDefinition(bookDefinition);
 
                 bookDefinition.getBookAuthors().add(bookAuthor);
-            } );
+            });
         }
 
         // Xử lý upload ảnh, ưu tiên file upload, rồi đến image url
@@ -408,7 +406,7 @@ public class BookDefinitionServiceImpl implements BookDefinitionService {
 
         bookDefinitionRepository.delete(bookDefinition);
 
-        logService.createLog(TAG,EventConstants.DELETE, "Xóa biên mục " + bookDefinition.getTitle(),userId);
+        logService.createLog(TAG, EventConstants.DELETE, "Xóa biên mục " + bookDefinition.getTitle(), userId);
 
         String message = messageSource.getMessage(SuccessMessage.DELETE, null, LocaleContextHolder.getLocale());
         return new CommonResponseDto(message);
@@ -418,6 +416,7 @@ public class BookDefinitionServiceImpl implements BookDefinitionService {
         return bookDefinitionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.BookDefinition.ERR_NOT_FOUND_ID, id));
     }
+
     @Override
     public PaginationResponseDto<BookDefinitionResponseDto> findAll(PaginationFullRequestDto requestDto) {
         Pageable pageable = PaginationUtil.buildPageable(requestDto, SortByDataConstant.BOOK_DEFINITION);
@@ -429,7 +428,7 @@ public class BookDefinitionServiceImpl implements BookDefinitionService {
                 .map(BookDefinitionResponseDto::new)
                 .toList();
 
-        PagingMeta pagingMeta = PaginationUtil.buildPagingMeta(requestDto,SortByDataConstant.BOOK_DEFINITION, page);
+        PagingMeta pagingMeta = PaginationUtil.buildPagingMeta(requestDto, SortByDataConstant.BOOK_DEFINITION, page);
 
         PaginationResponseDto<BookDefinitionResponseDto> responseDto = new PaginationResponseDto<>();
         responseDto.setItems(items);
@@ -456,7 +455,7 @@ public class BookDefinitionServiceImpl implements BookDefinitionService {
 
         bookDefinitionRepository.save(bookDefinition);
 
-        logService.createLog(TAG,EventConstants.EDIT,"Thay đổi trạng thái biên mục: " + bookDefinition.getActiveFlag(), userId);
+        logService.createLog(TAG, EventConstants.EDIT, "Thay đổi trạng thái biên mục: " + bookDefinition.getActiveFlag(), userId);
 
         String message = messageSource.getMessage(SuccessMessage.UPDATE, null, LocaleContextHolder.getLocale());
         return new CommonResponseDto(message, bookDefinition.getActiveFlag());
@@ -508,6 +507,25 @@ public class BookDefinitionServiceImpl implements BookDefinitionService {
                 .toList();
 
         PagingMeta pagingMeta = PaginationUtil.buildPagingMeta(requestDto, SortByDataConstant.BOOK_DEFINITION, page);
+
+        PaginationResponseDto<BookForReaderResponseDto> responseDto = new PaginationResponseDto<>();
+        responseDto.setItems(items);
+        responseDto.setMeta(pagingMeta);
+
+        return responseDto;
+    }
+
+    @Override
+    public PaginationResponseDto<BookForReaderResponseDto> getMostBorrowedBooksForUser(PaginationRequestDto requestDto) {
+        Pageable pageable = PaginationUtil.buildPageable(requestDto);
+
+        Page<BookDefinition> page = bookDefinitionRepository.findBooksOrderByBorrowCount(pageable);
+
+        List<BookForReaderResponseDto> items = page.getContent().stream()
+                .map(BookForReaderResponseDto::new)
+                .toList();
+
+        PagingMeta pagingMeta = PaginationUtil.buildPagingMeta(requestDto, page);
 
         PaginationResponseDto<BookForReaderResponseDto> responseDto = new PaginationResponseDto<>();
         responseDto.setItems(items);

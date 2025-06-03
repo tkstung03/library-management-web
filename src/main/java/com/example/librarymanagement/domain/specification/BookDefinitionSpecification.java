@@ -19,10 +19,10 @@ import static com.example.librarymanagement.util.SpecificationsUtil.castToRequir
 public class BookDefinitionSpecification {
 
     private static final Map<String, List<QueryOperator>> ALLOWED_FIELDS = Map.of(
-            "title", List.of(QueryOperator.LIKE, QueryOperator.EQUALS, QueryOperator.IN),
-            "author", List.of(QueryOperator.LIKE, QueryOperator.EQUALS, QueryOperator.IN),
-            "publisher", List.of(QueryOperator.LIKE, QueryOperator.EQUALS, QueryOperator.IN),
-            "publishingYear", List.of(QueryOperator.LIKE, QueryOperator.EQUALS, QueryOperator.LESS_THAN),
+            "title", List.of(QueryOperator.LIKE, QueryOperator.EQUALS,QueryOperator.NOT_EQUALS, QueryOperator.IN),
+            "author", List.of(QueryOperator.LIKE, QueryOperator.EQUALS, QueryOperator.NOT_EQUALS, QueryOperator.IN),
+            "publisher", List.of(QueryOperator.LIKE, QueryOperator.EQUALS,QueryOperator.NOT_EQUALS, QueryOperator.IN),
+            "publishingYear", List.of(QueryOperator.LIKE, QueryOperator.EQUALS,QueryOperator.NOT_EQUALS, QueryOperator.LESS_THAN),
             "isbn", List.of(QueryOperator.LIKE, QueryOperator.EQUALS)
     );
 

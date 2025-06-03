@@ -60,6 +60,7 @@ public class SecurityConfig {
             "api/v1/news-articles/*",
             "api/v1/book-definitions/books",
             "api/v1/book-definitions/books/*",
+            "api/v1/book-definitions/books/most-borrowed/*",
             "api/v1/stats/library",
             "api/v1/system-settings/library-rules",
             "api/v1/system-settings/library-info",
