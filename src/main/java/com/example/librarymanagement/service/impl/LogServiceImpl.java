@@ -10,6 +10,7 @@ import com.example.librarymanagement.domain.entity.Log;
 import com.example.librarymanagement.domain.entity.User;
 import com.example.librarymanagement.domain.specification.LogSpecification;
 import com.example.librarymanagement.repository.LogRepository;
+import com.example.librarymanagement.repository.UserRepository;
 import com.example.librarymanagement.service.LogService;
 import com.example.librarymanagement.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,8 @@ import java.util.List;
 public class LogServiceImpl implements LogService {
 
     private final LogRepository logRepository;
+
+    private final UserRepository userRepository;
 
 
     @Override
@@ -52,18 +55,21 @@ public class LogServiceImpl implements LogService {
 
     @Override
     public void createLog(String feature, String event, String content, String userId) {
-        User user = new User(userId);
-        Log l = new Log();
-        l.setFeature(feature);
-        l.setEvent(event);
-        l.setContent(content);
-        l.setTimestamp(LocalDateTime.now());
-        l.setUser(user);
-
         try {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found when creating log"));
+
+            Log l = new Log();
+            l.setFeature(feature);
+            l.setEvent(event);
+            l.setContent(content);
+            l.setTimestamp(LocalDateTime.now());
+            l.setUser(user);
+
             logRepository.save(l);
         } catch (Exception e) {
             log.error("Error occurred while creating log: {}", e.getMessage());
         }
     }
+
 }

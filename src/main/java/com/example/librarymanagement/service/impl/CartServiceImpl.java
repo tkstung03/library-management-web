@@ -46,7 +46,7 @@ public class CartServiceImpl implements CartService {
     @Value("${cartDetail.maxBooks:5}")
     private int maxBooksInCart;
 
-    @Value("${cartDetail.borrowTimeHours:2}")
+    @Value("10")
     private int borrowTimeHours;
 
     private Cart getEntity(String cardNumber) {
