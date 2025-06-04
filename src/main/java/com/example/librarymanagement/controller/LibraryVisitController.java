@@ -78,15 +78,17 @@ public class LibraryVisitController {
     public ResponseEntity<?> getVisitById(@PathVariable Long id) {
         return VsResponseUtil.success(libraryVisitService.findById(id));
     }
-    @Operation(summary = "Export PDF thống kê lượt vào - ra thư viện theo khoảng ngày")
+
+    @Operation(summary = "Export PDF thống kê lượt vào - ra thư viện theo khoảng ngày và chuyên ngành")
     @PreAuthorize("hasRole('ROLE_MANAGE_READER')")
     @GetMapping(UrlConstant.LibraryVisit.EXPORT_PDF)
     public ResponseEntity<byte[]> exportVisitReportToPdf(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) Long majorId
     ) {
         List<LibraryVisitResponseDto> visitLogs =
-                libraryVisitService.getVisits(startDate, endDate);
+                libraryVisitService.getVisits(startDate, endDate, majorId);
 
         byte[] pdfBytes = pdfService.generateVisitReportPdf(visitLogs, startDate, endDate);
 
@@ -96,15 +98,18 @@ public class LibraryVisitController {
 
         return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
+
+
     @Operation(summary = "Export Excel thống kê lượt vào - ra thư viện theo khoảng ngày")
     @PreAuthorize("hasRole('ROLE_MANAGE_READER')")
     @GetMapping(UrlConstant.LibraryVisit.EXPORT_EXCEL)
     public ResponseEntity<byte[]> exportVisitReportToExcel(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) Long majorId
     ) throws IOException {
         List<LibraryVisitResponseDto> visitLogs =
-                libraryVisitService.getVisits(startDate, endDate);
+                libraryVisitService.getVisits(startDate, endDate, majorId);
 
         byte[] excelBytes = excelExportService.createLibraryVisitReport(visitLogs, startDate, endDate);
 

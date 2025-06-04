@@ -20,7 +20,7 @@ public interface LibraryVisitService {
 
     LibraryVisitResponseDto findById(Long id);
 
-    List<LibraryVisitResponseDto> getVisits(LocalDate fromDate, LocalDate toDate);
+    List<LibraryVisitResponseDto> getVisits(LocalDate fromDate, LocalDate toDate, Long majorId);
 
     CommonResponseDto closeLibrary();
 }

@@ -3,8 +3,11 @@ package com.example.librarymanagement.domain.specification;
 import com.example.librarymanagement.domain.dto.filter.LibraryVisitFilter;
 import com.example.librarymanagement.domain.entity.LibraryVisit;
 import com.example.librarymanagement.domain.entity.LibraryVisit_;
+import com.example.librarymanagement.domain.entity.Major_;
+import com.example.librarymanagement.domain.entity.Major;
 import com.example.librarymanagement.domain.entity.Reader;
 import com.example.librarymanagement.domain.entity.Reader_;
+import com.example.librarymanagement.util.SpecificationsUtil;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import org.apache.commons.lang3.StringUtils;
@@ -53,6 +56,17 @@ public class LibraryVisitSpecification {
                     case Reader_.FULL_NAME -> {
                         Join<LibraryVisit, Reader> readerJoin = root.join(LibraryVisit_.reader);
                         predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(readerJoin.get(Reader_.fullName), "%" + keyword + "%"));
+                    }
+
+                    case Reader_.MAJOR -> {
+                        Join<LibraryVisit, Reader> readerJoin = root.join(LibraryVisit_.reader);
+                        Join<Reader, Major> majorJoin = readerJoin.join(Reader_.major);
+                        predicate = criteriaBuilder.and(predicate,
+                                criteriaBuilder.equal(
+                                        majorJoin.get("id"),
+                                        SpecificationsUtil.castToRequiredType(Long.class, keyword)
+                                )
+                        );
                     }
                 }
             }

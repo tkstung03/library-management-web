@@ -108,16 +108,23 @@ public class LibraryVisitServiceImpl implements LibraryVisitService {
     }
 
     @Override
-    public List<LibraryVisitResponseDto> getVisits(LocalDate entryTime, LocalDate exitTime) {
+    public List<LibraryVisitResponseDto> getVisits(LocalDate entryTime, LocalDate exitTime, Long majorId) {
         LocalDateTime startDateTime = entryTime.atStartOfDay();
         LocalDateTime endDateTime = exitTime.atTime(23, 59, 59);
 
-        List<LibraryVisit> visits = libraryVisitRepository.findByEntryTimeBetween(startDateTime, endDateTime);
+        List<LibraryVisit> visits;
+
+        if (majorId != null) {
+            visits = libraryVisitRepository.findByEntryTimeBetweenAndMajorId(startDateTime, endDateTime, majorId);
+        } else {
+            visits = libraryVisitRepository.findByEntryTimeBetween(startDateTime, endDateTime);
+        }
 
         return visits.stream()
                 .map(LibraryVisitResponseDto::new)
                 .collect(Collectors.toList());
     }
+
 
     @Override
     public CommonResponseDto closeLibrary() {

@@ -44,7 +44,7 @@ public class PdfServiceImpl implements PdfService {
         String FONT_PATH = "src/main/resources/fonts/HankenGrotesk-Regular.ttf";
 
         try {
-            BaseFont baseFont =BaseFont.createFont(FONT_PATH, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            BaseFont baseFont = BaseFont.createFont(FONT_PATH, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
 
             // Font thông thường
             normalFontSmall = new Font(baseFont, 10, Font.NORMAL);
@@ -686,9 +686,113 @@ public class PdfServiceImpl implements PdfService {
         return outputStream.toByteArray();
     }
 
+    //Lấy chuỗi dạng STK0002 - STK0004
+    public String formatBookCodeRange(List<Book> books) {
+        if (books == null || books.isEmpty()) return "";
+
+        List<String> codes = books.stream()
+                .map(Book::getBookCode)
+                .sorted()
+                .toList();
+
+        if (codes.size() == 1) {
+            return codes.get(0);
+        } else {
+            return codes.get(0) + " - " + codes.get(codes.size() - 1);
+        }
+    }
+
+    public String getAuthorNames(BookDefinition bookDefinition) {
+        if (bookDefinition.getBookAuthors() == null || bookDefinition.getBookAuthors().isEmpty()) {
+            return "";
+        }
+
+        return bookDefinition.getBookAuthors().stream()
+                .map(bookAuthor -> bookAuthor.getAuthor().getFullName())
+                .collect(Collectors.joining(", "));
+    }
+
     @Override
-    public byte[] createBookListPdf(List<Book> books) {
-        return new byte[0];
+    public byte[] createBookListPdf(String name, List<Category> categories) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Document document = new Document(PageSize.A4, 20, 20, 20, 20);
+
+        try {
+            PdfWriter.getInstance(document, outputStream);
+            document.open();
+
+            for (Category category : categories) {
+                // Lọc BookDefinition có sách
+                List<BookDefinition> bookDefinitionsWithBooks = category.getBookDefinitions().stream()
+                        .filter(bd -> bd.getBooks() != null && !bd.getBooks().isEmpty())
+                        .toList();
+
+                // Bỏ qua danh mục nếu không có quyển nào
+                if (bookDefinitionsWithBooks.isEmpty()) {
+                    continue;
+                }
+
+                document.newPage();
+
+                // Tên thư viện
+                Paragraph libraryName = new Paragraph(name, subHeaderFont);
+                libraryName.setAlignment(Element.ALIGN_LEFT);
+                libraryName.setSpacingAfter(8f);
+                document.add(libraryName);
+
+                // Tiêu đề danh mục
+                Paragraph categoryTitle = new Paragraph("DANH MỤC: " + category.getCategoryName().toUpperCase(), headerFont);
+                categoryTitle.setAlignment(Element.ALIGN_CENTER);
+                categoryTitle.setSpacingAfter(12f);
+                document.add(categoryTitle);
+
+                // Tạo bảng
+                PdfPTable table = new PdfPTable(6);
+                table.setWidthPercentage(100);
+                table.setWidths(new float[]{1f, 3f, 5f, 5f, 2f, 3f});
+                table.setSpacingBefore(5f);
+
+                // Header
+                List<String> headers = Arrays.asList("STT", "Số ĐKCB", "Tên sách", "Tên tác giả", "Năm XB", "Ghi chú");
+                for (String header : headers) {
+                    PdfPCell headerCell = new PdfPCell(new Phrase(header, boldFontSmall));
+                    headerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    headerCell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                    headerCell.setPadding(5f);
+                    table.addCell(headerCell);
+                }
+
+                int stt = 1;
+                for (BookDefinition bookDef : category.getBookDefinitions()) {
+                    List<Book> books = bookDef.getBooks();
+                    if (books == null || books.isEmpty()) continue;
+
+                    String soDkcb = formatBookCodeRange(books);
+
+                    PdfPCell sttCell = new PdfPCell(new Phrase(String.valueOf(stt++), normalFontSmall));
+                    PdfPCell codeCell = new PdfPCell(new Phrase(soDkcb, normalFontSmall));
+                    PdfPCell titleCell = new PdfPCell(new Phrase(bookDef.getTitle(), normalFontSmall));
+                    PdfPCell authorCell = new PdfPCell(new Phrase(getAuthorNames(bookDef), normalFontSmall));
+                    PdfPCell yearCell = new PdfPCell(new Phrase(bookDef.getPublishingYear() != null ? String.valueOf(bookDef.getPublishingYear()) : "-", normalFontSmall));
+                    PdfPCell noteCell = new PdfPCell(new Phrase(bookDef.getAdditionalInfo(), normalFontSmall));
+
+                    table.addCell(sttCell);
+                    table.addCell(codeCell);
+                    table.addCell(titleCell);
+                    table.addCell(authorCell);
+                    table.addCell(yearCell);
+                    table.addCell(noteCell);
+                }
+
+                document.add(table);
+            }
+
+            document.close();
+        } catch (Exception e) {
+            log.error("Error creating book category list PDF: {}", e.getMessage(), e);
+        }
+
+        return outputStream.toByteArray();
     }
 
     @Override
@@ -830,6 +934,7 @@ public class PdfServiceImpl implements PdfService {
 
         return out.toByteArray();
     }
+
     private void addTableHeader(PdfPTable table) {
         List<String> headers = Arrays.asList("STT", "Số thẻ", "Họ tên", "Loại thẻ", "Chuyên ngành", "Giờ vào", "Giờ ra");
         for (String header : headers) {

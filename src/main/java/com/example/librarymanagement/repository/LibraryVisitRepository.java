@@ -31,4 +31,15 @@ public interface LibraryVisitRepository extends JpaRepository<LibraryVisit, Long
 
     @EntityGraph(attributePaths = {"reader", "reader.major"})
     Page<LibraryVisit> findAll(Specification<LibraryVisit> spec, Pageable pageable);
+
+    @Query("SELECT lv FROM LibraryVisit lv " +
+            "JOIN lv.reader r " +
+            "WHERE lv.entryTime BETWEEN :start AND :end " +
+            "AND r.major.id = :majorId")
+    List<LibraryVisit> findByEntryTimeBetweenAndMajorId(
+            LocalDateTime start,
+            LocalDateTime end,
+            Long majorId
+    );
+
 }

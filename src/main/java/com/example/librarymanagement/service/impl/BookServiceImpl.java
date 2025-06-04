@@ -10,6 +10,7 @@ import com.example.librarymanagement.domain.entity.Book;
 import com.example.librarymanagement.domain.specification.BookSpecification;
 import com.example.librarymanagement.exception.NotFoundException;
 import com.example.librarymanagement.repository.BookRepository;
+import com.example.librarymanagement.repository.CategoryRepository;
 import com.example.librarymanagement.service.BookService;
 import com.example.librarymanagement.service.LogService;
 import com.example.librarymanagement.service.PdfService;
@@ -41,6 +42,8 @@ public class BookServiceImpl implements BookService {
 
     private final SystemSettingService systemSettingService;
 
+    private final CategoryRepository categoryRepository;
+
     private Book getEntity(long id) {
         return bookRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.Book.ERR_NOT_FOUND_ID, id));
@@ -70,7 +73,7 @@ public class BookServiceImpl implements BookService {
                 .map(BookResponseDto::new)
                 .toList();
 
-        PagingMeta pagingMeta = PaginationUtil.buildPagingMeta(requestDto,SortByDataConstant.BOOK,page);
+        PagingMeta pagingMeta = PaginationUtil.buildPagingMeta(requestDto, SortByDataConstant.BOOK, page);
         PaginationResponseDto<BookResponseDto> responseDto = new PaginationResponseDto<>();
         responseDto.setItems(items);
         responseDto.setMeta(pagingMeta);
@@ -96,7 +99,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public byte[] getBooksPdfContent(Set<Long> ids) {
         List<Book> books = bookRepository.findAllById(ids);
-        return pdfService.  createPdfFromBooks(books);
+        return pdfService.createPdfFromBooks(books);
     }
 
     @Override
@@ -113,7 +116,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public byte[] generateBookListPdf() {
-        List<Book> books = bookRepository.findAll();
-        return pdfService.createBookListPdf(books);
+        String name = systemSettingService.getLibraryInfo().getLibraryName();
+        return pdfService.createBookListPdf(name, categoryRepository.findAll());
     }
 }

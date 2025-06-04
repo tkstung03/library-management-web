@@ -608,7 +608,7 @@ public class BookDefinitionServiceImpl implements BookDefinitionService {
 
     @Override
     public byte[] generateBookListPdf() {
-        List<Book> books = bookRepository.findAll();
-        return pdfService.createBookListPdf(books);
+        String name = systemSettingService.getLibraryInfo().getLibraryName();
+        return pdfService.createBookListPdf(name, categoryRepository.findAll());
     }
 }
