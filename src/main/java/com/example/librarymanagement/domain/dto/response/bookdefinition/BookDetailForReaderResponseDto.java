@@ -43,6 +43,10 @@ public class BookDetailForReaderResponseDto {
 
     private final List<BaseEntityDto> authors = new ArrayList<>();
 
+    private final String bookNumber;
+
+    private final List<String> bookCodes = new ArrayList<>();
+
     public BookDetailForReaderResponseDto(BookDefinition bookDefinition){
 
         this.id = bookDefinition.getId();
@@ -55,6 +59,7 @@ public class BookDetailForReaderResponseDto {
         this.pdfUrl = bookDefinition.getPdfUrl();
         this.summary = bookDefinition.getSummary();
         this.publishingYear = bookDefinition.getPublishingYear();
+        this.bookNumber = bookDefinition.getBookNumber();
 
         //bookCount
         this.bookCount = bookDefinition.getBooks().stream()
@@ -81,5 +86,14 @@ public class BookDetailForReaderResponseDto {
                     .map(author -> new BaseEntityDto(author.getId(), author.getFullName()))
                     .toList());
         }
+
+        this.bookCodes.addAll(
+                bookDefinition.getBooks().stream()
+                        .filter(book -> book.getBookCondition() == BookCondition.AVAILABLE && book.getExportReceipt() == null)
+                        .map(Book::getBookCode)
+                        .toList()
+        );
+
+
     }
 }

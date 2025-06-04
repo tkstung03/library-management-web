@@ -1,4 +1,4 @@
-rowsPerPage=60
+rowsPerPage=10
 reservationTime=5
 maxBorrowLimit=5
 maxRenewalTimes=3
